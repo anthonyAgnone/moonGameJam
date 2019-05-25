@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 const CONSTANTS = {
   interval: 10,
@@ -6,9 +6,16 @@ const CONSTANTS = {
   width: 5
 };
 
-const { loadImage, loadLevel } = require("../helpers/loaders");
-const SpriteSheet = require("../helpers/SpriteSheet");
+const { loadImage, loadLevel } = require('../helpers/loaders');
+const SpriteSheet = require('../helpers/SpriteSheet');
 
+const Keyboard = require('../helpers/KeyboardState.js');
+
+const input = new Keyboard();
+input.addMapping(32, keyState => {
+  console.log(keyState);
+});
+input.listenTo(window);
 class Mario {
   constructor(canvas, ctx, shouldTakeScreenshots = false) {
     this.canvas = canvas;
@@ -33,7 +40,7 @@ class Mario {
   }
 
   addListeners() {
-    window.addEventListener("resize", this.update);
+    window.addEventListener('resize', this.update);
   }
 
   update() {
@@ -42,14 +49,14 @@ class Mario {
   }
 
   beforeStart() {
-    this.ctx.fillStyle = "#ffff00";
+    this.ctx.fillStyle = '#ffff00';
     this.ctx.fillRect(0, 0, this.width, this.height);
-    loadImage("./img/tiles.png").then(image => {
+    loadImage('./img/tiles.png').then(image => {
       const sprites = new SpriteSheet(image);
-      sprites.define("ground", 0, 0);
-      sprites.define("sky", 3, 23);
+      sprites.define('ground', 0, 0);
+      sprites.define('sky', 3, 23);
 
-      const level = loadLevel("1-1");
+      const level = loadLevel('1-1');
       level.backgrounds.forEach(bg => {
         this.drawBackground(bg, this.ctx, sprites);
       });

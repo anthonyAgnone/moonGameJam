@@ -1,11 +1,11 @@
-"use strict";
+'use strict';
 
 /**
  * REQUIRED HELPERS
  *
  * These are helper modules – non-visual modules.
  */
-const TakeScreenshotOnSpacebar = require("./helpers/take-screenshot-on-spacebar");
+const TakeScreenshotOnSpacebar = require('./helpers/take-screenshot-on-spacebar');
 
 /**
  * REQUIRED MODULES
@@ -13,18 +13,27 @@ const TakeScreenshotOnSpacebar = require("./helpers/take-screenshot-on-spacebar"
  * Require all your modules here.
  * Modules should be in the /modules folder.
  */
-const Rectangles = require("./modules/rectangles");
-const Lines = require("./modules/lines");
-const Dots = require("./modules/dots");
-const Mario = require("./modules/mario");
-const Image = require("./modules/image");
-const CircleImage = require("./modules/circle-image");
-const QuicksortImage = require("./modules/quicksort-image");
+
+const Rectangles = require('./modules/rectangles');
+const Lines = require('./modules/lines');
+const Dots = require('./modules/dots');
+const Mario = require('./modules/mario');
+const Image = require('./modules/image');
+const CircleImage = require('./modules/circle-image');
+const QuicksortImage = require('./modules/quicksort-image');
+
+const Keyboard = require('./helpers/KeyboardState.js');
+
+const input = new Keyboard();
+input.addMapping(32, keyState => {
+  console.log(keyState);
+});
+input.listenTo(window);
 
 class Renderer {
   constructor() {
-    this.canvas = document.getElementById("canvas");
-    this.ctx = this.canvas.getContext("2d");
+    this.canvas = document.getElementById('canvas');
+    this.ctx = this.canvas.getContext('2d');
     this.width = null;
     this.height = null;
     this.addBindings();
@@ -39,7 +48,7 @@ class Renderer {
   }
 
   addListeners() {
-    window.addEventListener("resize", this.update);
+    window.addEventListener('resize', this.update);
   }
 
   update() {
