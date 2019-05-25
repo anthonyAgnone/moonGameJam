@@ -4,6 +4,7 @@ function loadImage(url) {
     image.addEventListener("load", () => {
       resolve(image);
     });
+    console.log(image);
     image.src = url;
   });
 }
