@@ -1,45 +1,40 @@
+const { loadImage, loadLevel } = require("./loaders.js");
 const SpriteSheet = require("./SpriteSheet.js");
-const { loadImage } = require("./loaders.js");
 
-function loadHeroSprite() {
-  return loadImage("./img/heroRun.png").then(image => {
-    console.log("image loaded", image);
-    const sprites = new SpriteSheet(image, 231, 227, 225, 227);
-    sprites.defineTile("run", 0, 0);
+const spriteSize = {
+  width: 138,
+  height: 136
+};
+
+function loadBackgroundSprites() {
+  return loadImage("./img/tiles.png").then(image => {
+    const sprites = new SpriteSheet(image, 16, 16);
+    sprites.define("longrect", 0, 0, 16, 16);
+    sprites.define("boi", 0, 1, 16, 16);
+    sprites.define("tallrect", 0, 2, 16, 16);
     return sprites;
   });
 }
 
 function loadHeroIdle() {
-  return loadImage("./img/heroRun.png").then(image => {
-    console.log("image loaded", image);
-    const sprites = new SpriteSheet(image, 231, 227, 225, 227);
-    sprites.defineTile("idle", 3, 0);
-    return sprites;
+  return loadImage("./img/idle.png").then(image => {
+    const sprite = new SpriteSheet(image, 231, 227);
+    sprite.define("idle", 0, 0, spriteSize.width, spriteSize.height);
+
+    return sprite;
   });
 }
 
-function loadGroundSprites() {
-  return loadImage("./img/tiles.png").then(image => {
-    const sprites = new SpriteSheet(image, 16, 16, 16, 16);
-    sprites.defineTile("ground", 0, 0);
-    return sprites;
-  });
-}
-
-function loadBackgroundSprite(w, h) {
+function loadStatic() {
   return loadImage("./img/background.png").then(image => {
-    console.log("image loaded", image);
-    const sprite = new SpriteSheet(image, w, h - 150, 1920, 10);
-    sprite.defineTile("background", 0, 0);
-    console.log(sprite);
+    const sprite = new SpriteSheet(image, 1920, 1080);
+    sprite.define("static", 0, 0, 1920, 1080);
     return sprite;
   });
 }
 
 module.exports = {
-  loadHeroSprite: loadHeroSprite,
-  loadGroundSprites: loadGroundSprites,
-  loadBackgroundSprite: loadBackgroundSprite,
-  loadHeroIdle: loadHeroIdle
+  loadBackgroundSprites: loadBackgroundSprites,
+  loadHeroIdle: loadHeroIdle,
+  loadStatic: loadStatic
 };

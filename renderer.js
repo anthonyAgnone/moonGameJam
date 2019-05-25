@@ -1,72 +1,73 @@
 "use strict";
 
-/**
- * REQUIRED HELPERS
- *
- * These are helper modules – non-visual modules.
- */
-const TakeScreenshotOnSpacebar = require("./helpers/take-screenshot-on-spacebar");
+// DEPENDENCIES AND IMPORTS
 
-/**
- * REQUIRED MODULES
- *
- * Require all your modules here.
- * Modules should be in the /modules folder.
- */
-const Rectangles = require("./modules/rectangles");
-const Lines = require("./modules/lines");
-const Dots = require("./modules/dots");
-const Mario = require("./modules/mario");
-const Image = require("./modules/image");
-const CircleImage = require("./modules/circle-image");
-const QuicksortImage = require("./modules/quicksort-image");
+const { loadLevel } = require("./helpers/loaders.js");
 
-class Renderer {
-  constructor() {
-    this.canvas = document.getElementById("canvas");
-    this.ctx = this.canvas.getContext("2d");
-    this.width = null;
-    this.height = null;
-    this.addBindings();
-    this.addListeners();
-    this.update();
-    this.run();
-    new TakeScreenshotOnSpacebar();
-  }
+const {
+  loadHeroIdle,
+  loadBackgroundSprites,
+  loadStatic
+} = require("./helpers/sprites");
 
-  addBindings() {
-    this.update = this.update.bind(this);
-  }
+const Compositor = require("./helpers/Compositor");
 
-  addListeners() {
-    window.addEventListener("resize", this.update);
-  }
+const {
+  createBackgroundLayer,
+  createStaticLayer
+} = require("./helpers/layers");
 
-  update() {
-    this.width = window.innerWidth;
-    this.height = window.innerHeight;
-    this.canvas.width = this.width;
-    this.canvas.height = this.height;
-  }
+const Entity = require("./helpers/Entity");
 
-  run() {
-    // new Rectangles(this.canvas, this.ctx, false);
-    // new Lines(this.canvas, this.ctx, false);
-    // new Dots(this.canvas, this.ctx);
-    new Mario(this.canvas, this.ctx);
-    // new Image(this.canvas, this.ctx, false, 'img/corgi.png');
-    // new Image(this.canvas, this.ctx, false, 'img/zizek.png');
-    // new CircleImage(this.canvas, this.ctx, 'img/corgi.png', 0, 0, 300, 50, 59);
-    // new CircleImage(this.canvas, this.ctx, 'img/corgi.png', this.width, 0, 300, 50, 59);
-    // new CircleImage(this.canvas, this.ctx, 'img/corgi.png', 0, this.height, 300, 50, 59);
-    // new CircleImage(this.canvas, this.ctx, 'img/corgi.png', this.width, this.height, 300, 50, 59);
-    // new CircleImage(this.canvas, this.ctx, 'img/tea.png', 260, 260, 300, 80, 80);
-    // new CircleImage(this.canvas, this.ctx, 'img/tea.png', this.width - 260, 260, 300, 80, 80);
-    // new CircleImage(this.canvas, this.ctx, 'img/tea.png', 260, this.height - 260, 300, 80, 80);
-    // new CircleImage(this.canvas, this.ctx, 'img/tea.png', this.width - 260, this.height - 260, 300, 80, 80);
-    // new CircleImage(this.canvas, this.ctx, 'img/corgi.png', this.width/2, this.height/2, 300, 100, 118);
-    // new QuicksortImage(this.canvas, this.ctx, 'img/cat.png');
-  }
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+
+function createSpriteLayer(entity) {
+  return function drawSpriteLayer(context) {
+    entity.draw(context);
+  };
 }
 
-new Renderer();
+// PROMISE ALL PERFORMS FOUR FUNCTIONS AND UPON SUCCESS THE DOT THEN HAPPENS WITH THOSE RESULTS
+
+Promise.all([
+  loadBackgroundSprites(),
+  loadHeroIdle(),
+  loadStatic(),
+  loadLevel("1-1")
+]).then(([sprites, heroSprite, staticLayerSprite, level]) => {
+  const comp = new Compositor();
+
+  const gravity = 0.5;
+
+  const staticLayer = createStaticLayer(staticLayerSprite);
+  comp.layers.push(staticLayer);
+
+  const backgroundLayer = createBackgroundLayer(level.backgrounds, sprites);
+  comp.layers.push(backgroundLayer);
+
+  const hero = new Entity();
+  hero.pos.set(50, 900);
+  hero.vel.set(2, -10);
+
+  hero.draw = function drawHero(context) {
+    heroSprite.draw("idle", context, this.pos.x, this.pos.y);
+  };
+
+  hero.update = function updateHero() {
+    this.pos.x += this.vel.x;
+    this.pos.y += this.vel.y;
+  };
+
+  const heroLayer = createSpriteLayer(hero);
+  comp.layers.push(heroLayer);
+
+  function update() {
+    comp.draw(context);
+    hero.update();
+    hero.vel.y += gravity;
+    requestAnimationFrame(update);
+  }
+
+  update();
+});

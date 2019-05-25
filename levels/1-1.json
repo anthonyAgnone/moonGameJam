@@ -1,8 +1,16 @@
 {
   "backgrounds": [
     {
-      "tile": "ground",
-      "ranges": [[0, 50, 58, 68], [55, 120, 58, 68]]
+      "tile": "longrect",
+      "ranges": [[20, 30, 30, 35], [5, 10, 1, 6], [52, 58, 13, 15]]
+    },
+    {
+      "tile": "boi",
+      "ranges": [[65, 68, 33, 39]]
+    },
+    {
+      "tile": "tallrect",
+      "ranges": [[90, 94, 2, 80]]
     }
   ]
 }
