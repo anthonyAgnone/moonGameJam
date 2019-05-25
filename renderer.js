@@ -43,7 +43,7 @@ Promise.all([
   const gravity = 30;
 
   hero.pos.set(50, 900);
-  hero.vel.set(200, -200);
+  //hero.vel.set(200, -200);
 
   const staticLayer = createStaticLayer(staticLayerSprite);
   comp.layers.push(staticLayer);

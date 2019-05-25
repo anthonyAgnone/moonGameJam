@@ -12,9 +12,15 @@ function createHero() {
     hero.update = function updateHero(deltaTime) {
       if (this.pos.x < canvas.width - 200 && this.pos.x > 0) {
         this.pos.x += this.vel.x * deltaTime;
+      } else {
+        this.vel.x = 0;
+        this.vel.y = 0;
       }
       if (this.pos.y < canvas.height - 200 && this.pos.y > 0) {
         this.pos.y += this.vel.y * deltaTime;
+      } else {
+        this.vel.x = 0;
+        this.vel.y = 0;
       }
       //this.pos.x += this.vel.x * deltaTime;
       // this.pos.y += this.vel.y * deltaTime;
