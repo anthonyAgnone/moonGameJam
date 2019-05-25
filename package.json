@@ -1,14 +1,26 @@
 {
-  "name": "gamejam",
+  "name": "electron-quick-start",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A minimal Electron application",
+  "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "rm -rf screenshots/ && electron ."
   },
-  "author": "",
-  "license": "ISC",
+  "repository": "https://github.com/electron/electron-quick-start",
+  "keywords": [
+    "Electron",
+    "quick",
+    "start",
+    "tutorial",
+    "demo"
+  ],
+  "author": "GitHub",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "^1.4.1"
+  },
   "dependencies": {
-    "electron": "^5.0.2"
+    "electron-screenshot": "^1.0.3",
+    "fs-jetpack": "^0.12.0"
   }
 }
