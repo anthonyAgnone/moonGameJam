@@ -28,7 +28,14 @@ function createStaticLayer(sprite) {
   };
 }
 
+function createSpriteLayer(entity) {
+  return function drawSpriteLayer(context) {
+    entity.draw(context);
+  };
+}
+
 module.exports = {
   createBackgroundLayer: createBackgroundLayer,
-  createStaticLayer: createStaticLayer
+  createStaticLayer: createStaticLayer,
+  createSpriteLayer: createSpriteLayer
 };
