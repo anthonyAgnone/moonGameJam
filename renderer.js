@@ -16,6 +16,7 @@ const TakeScreenshotOnSpacebar = require("./helpers/take-screenshot-on-spacebar"
 const Rectangles = require("./modules/rectangles");
 const Lines = require("./modules/lines");
 const Dots = require("./modules/dots");
+const Mario = require("./modules/mario");
 const Image = require("./modules/image");
 const CircleImage = require("./modules/circle-image");
 const QuicksortImage = require("./modules/quicksort-image");
@@ -51,7 +52,8 @@ class Renderer {
   run() {
     // new Rectangles(this.canvas, this.ctx, false);
     // new Lines(this.canvas, this.ctx, false);
-    new Dots(this.canvas, this.ctx);
+    // new Dots(this.canvas, this.ctx);
+    new Mario(this.canvas, this.ctx);
     // new Image(this.canvas, this.ctx, false, 'img/corgi.png');
     // new Image(this.canvas, this.ctx, false, 'img/zizek.png');
     // new CircleImage(this.canvas, this.ctx, 'img/corgi.png', 0, 0, 300, 50, 59);
