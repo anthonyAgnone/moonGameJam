@@ -17,9 +17,23 @@ function loadBackgroundSprites() {
 }
 
 function loadHeroSprite() {
-  return loadImage("./img/tempCharSheet.png").then(image => {
+  return loadImage("./img/main.png").then(image => {
     const sprite = new SpriteSheet(image, 231, 227);
     sprite.define("idle", 1, 2, spriteSize.width, spriteSize.height);
+    sprite.define("run1", 0, 0, spriteSize.width, spriteSize.height);
+    sprite.define("run2", 1, 0, spriteSize.width, spriteSize.height);
+    sprite.define("run3", 2, 0, spriteSize.width, spriteSize.height);
+    sprite.define("run4", 3, 0, spriteSize.width, spriteSize.height);
+    sprite.define("run5", 4, 0, spriteSize.width, spriteSize.height);
+    sprite.define("run6", 5, 0, spriteSize.width, spriteSize.height);
+    sprite.define("run7", 0, 1, spriteSize.width, spriteSize.height);
+    sprite.define("run8", 1, 1, spriteSize.width, spriteSize.height);
+    sprite.define("run9", 2, 1, spriteSize.width, spriteSize.height);
+    sprite.define("run10", 3, 1, spriteSize.width, spriteSize.height);
+    sprite.define("run11", 4, 1, spriteSize.width, spriteSize.height);
+    sprite.define("run12", 5, 1, spriteSize.width, spriteSize.height);
+    sprite.define("jump1", 1, 4, spriteSize.width, spriteSize.height);
+    sprite.define("fall1", 4, 3, spriteSize.width, spriteSize.height);
     return sprite;
   });
 }

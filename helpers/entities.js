@@ -4,14 +4,45 @@ const { loadHeroSprite } = require("./sprites.js");
 function createHero() {
   return loadHeroSprite().then(sprite => {
     const hero = new Entity();
-
-    hero.draw = function drawHero(context) {
-      sprite.draw("idle", context, this.pos.x, this.pos.y);
-    };
+    let currentFrame;
 
     hero.update = function updateHero(deltaTime) {
+      this.lastPos.x = this.pos.x;
       this.pos.x += this.vel.x * deltaTime;
       this.pos.y += this.vel.y * deltaTime;
+      this.distance = this.vel.x * deltaTime;
+      if (this.vel.x == 0) this.startPoint = this.pos.x;
+      currentFrame =
+        Math.floor(Math.abs(this.pos.x - this.startPoint) / 21) % frames.length;
+
+      console.log(currentFrame);
+    };
+
+    const frames = [
+      "run1",
+      "run2",
+      "run3",
+      "run4",
+      "run5",
+      "run6",
+      "run7",
+      "run8",
+      "run9",
+      "run10",
+      "run11",
+      "run12"
+    ];
+
+    function routeFrame(hero) {
+      if (hero.lastPos.x !== hero.pos.x && hero.lastPos.y == hero.pos.y)
+        return frames[currentFrame];
+      else if (hero.vel.y < 0) return "jump1";
+      else if (hero.vel.y > 0) return "fall1";
+      return "idle";
+    }
+
+    hero.draw = function drawHero(context) {
+      sprite.draw(routeFrame(this), context, this.pos.x, this.pos.y);
     };
 
     return hero;
