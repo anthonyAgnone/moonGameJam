@@ -1,34 +1,32 @@
 "use strict";
 
-const CONSTANTS = {
-  interval: 10,
-  duration: 20,
-  width: 5
-};
-
 const { loadImage, loadLevel } = require("../helpers/loaders");
 const SpriteSheet = require("../helpers/SpriteSheet");
+const {
+  loadBackgroundSprite,
+  loadGroundSprites,
+  loadHeroSprite,
+  loadHeroIdle
+} = require("../helpers/sprites");
 
 class Mario {
-  constructor(canvas, ctx, shouldTakeScreenshots = false) {
+  constructor(canvas, ctx) {
     this.canvas = canvas;
     this.ctx = ctx;
-    this.colorSwitchCount = 0;
-    this.width = null;
-    this.height = null;
-    this.interval = null;
-    this.counter = 0;
-    this.screenshot = shouldTakeScreenshots;
+    this.width = 1920;
+    this.height = 1080;
+    this.pos = {
+      x: 54,
+      y: 704
+    };
     this.addBindings();
     this.addListeners();
-    this.update();
     this.beforeStart();
     this.makeDrawing();
   }
 
   addBindings() {
     this.update = this.update.bind(this);
-    this.updateDrawing = this.updateDrawing.bind(this);
     this.drawBackground = this.drawBackground.bind(this);
   }
 
@@ -42,17 +40,25 @@ class Mario {
   }
 
   beforeStart() {
-    this.ctx.fillStyle = "#ffff00";
-    this.ctx.fillRect(0, 0, this.width, this.height);
-    loadImage("./img/tiles.png").then(image => {
-      const sprites = new SpriteSheet(image);
-      sprites.define("ground", 0, 0);
-      sprites.define("sky", 3, 23);
-
-      const level = loadLevel("1-1");
-      level.backgrounds.forEach(bg => {
-        this.drawBackground(bg, this.ctx, sprites);
+    Promise.all([
+      loadHeroSprite(),
+      loadGroundSprites(),
+      loadBackgroundSprite(this.width, this.height),
+      loadHeroIdle(),
+      loadLevel("1-1")
+    ]).then(([hero, ground, background, idle, level]) => {
+      level.backgrounds.forEach(background => {
+        this.drawBackground(background, this.ctx, ground);
       });
+      background.draw("background", this.ctx, 0, 0);
+      hero.draw("run", this.ctx, 4, 570);
+      idle.draw("idle", scene.ctx, scene.pos.x, scene.pos.y);
+      function update(scene) {
+        idle.draw("idle", scene.ctx, scene.pos.x, scene.pos.y);
+        scene.pos.x += 2;
+        requestAnimationFrame(update);
+      }
+      update(this);
     });
   }
 
@@ -66,9 +72,7 @@ class Mario {
     });
   }
 
-  makeDrawing() {
-    this.interval = window.setInterval(this.updateDrawing, CONSTANTS.interval);
-  }
+  makeDrawing() {}
 
   stopDrawing() {
     window.clearInterval(this.interval);

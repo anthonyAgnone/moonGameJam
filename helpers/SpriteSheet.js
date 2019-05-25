@@ -6,24 +6,18 @@ class SpriteSheet {
     this.tiles = new Map();
   }
 
-  define(name, x, y) {
+  define(name, x, y, width, height) {
     const buffer = document.createElement("canvas");
-    buffer.height = this.height;
-    buffer.width = this.width;
+    buffer.height = height;
+    buffer.width = width;
     buffer
       .getContext("2d")
-      .drawImage(
-        this.image,
-        this.width * x,
-        this.height * y,
-        this.width,
-        this.height,
-        0,
-        0,
-        this.width,
-        this.height
-      );
+      .drawImage(this.image, x, y, width, height, 0, 0, width, height);
     this.tiles.set(name, buffer);
+  }
+
+  defineTile(name, x, y) {
+    this.define(name, x * this.width, y * this.height, this.width, this.height);
   }
 
   draw(name, context, x, y) {

@@ -10,7 +10,11 @@ function loadImage(url) {
 
 function loadLevel(name) {
   //   return fetch(`../levels/${name}.json`).then(r => r.json());
-  return (json = require(`../levels/${name}.json`));
+  return new Promise(resolve => {
+    const json = require(`../levels/${name}.json`);
+    resolve(json);
+  });
+  //   return (json = require(`../levels/${name}.json`));
 }
 
 module.exports = {
