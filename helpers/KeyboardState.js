@@ -22,6 +22,7 @@ class KeyboardState {
 
     event.preventDefault();
 
+
     const keyState = event.type === 'keydown' ? PRESSED : RELEASED;
 
     if (this.keyStates.get(keyCode) === keyState) {
@@ -29,7 +30,6 @@ class KeyboardState {
     }
 
     this.keyStates.set(keyCode, keyState);
-    console.log(this.keyStates);
 
     this.keyMap.get(keyCode)(keyState);
   }

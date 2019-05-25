@@ -1,13 +1,15 @@
 'use strict';
 
 // DEPENDENCIES AND IMPORTS
+
 const Compositor = require('./helpers/Compositor');
 const Timer = require('./helpers/Timer');
 const { loadLevel } = require('./helpers/loaders.js');
 const { createHero } = require('./helpers/entities');
+const Keyboard = require("./helpers/KeyboardState");
 
 const { loadBackgroundSprites, loadStatic } = require('./helpers/sprites');
-const Keyboard = require('./helpers/KeyboardState.js');
+
 const SpritesJS = require('./helpers/sprites.js');
 
 const heroSize = SpritesJS.spriteSize;
@@ -30,6 +32,7 @@ function getMousePos(canvas, evt) {
     y: ((evt.clientY - rect.top) / (rect.bottom - rect.top)) * canvas.height
   };
 }
+
 // PROMISE ALL PERFORMS FOUR FUNCTIONS AND UPON SUCCESS THE DOT THEN HAPPENS WITH THOSE RESULTS
 
 Promise.all([
@@ -40,10 +43,11 @@ Promise.all([
 ]).then(([hero, sprites, staticLayerSprite, level]) => {
   const comp = new Compositor();
 
-  const gravity = 30;
+  const gravity = 20;
 
-  hero.pos.set(50, 900);
-  //hero.vel.set(200, -200);
+  hero.pos.set(50, 90);
+  hero.lastPos.set(50, 90);
+  hero.vel.set(0, 0);
 
   const staticLayer = createStaticLayer(staticLayerSprite);
   comp.layers.push(staticLayer);
@@ -146,9 +150,6 @@ Promise.all([
   // input listeners
   const input = new Keyboard();
 
-  input.addMapping(32, keyState => {
-    console.log(keyState);
-  });
   input.listenTo(window);
 
   window.addEventListener('mousedown', event => {
@@ -197,4 +198,22 @@ Promise.all([
   function intersection(subject, fn) {
     obstacles.filter(obstacle => overlap(subject, obstacle)).forEach(fn);
   }
+
+  input.addMapping(68, keyState => {
+    if (keyState > 0) hero.vel.set(300, hero.vel.y);
+    else hero.vel.set(0, hero.vel.y);
+  });
+
+  input.addMapping(65, keyState => {
+    if (keyState > 0) hero.vel.set(-300, hero.vel.y);
+    else hero.vel.set(0, hero.vel.y);
+  });
+
+  input.addMapping(32, keyState => {
+    if (keyState > 0) hero.vel.set(hero.vel.x, -500);
+    else {
+      hero.vel.set(hero.vel.x, gravity);
+    }
+  });
+
 });

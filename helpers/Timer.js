@@ -23,6 +23,7 @@ class Timer {
 
   start() {
     this.enqueue();
+    console.log(this);
   }
 }
 
