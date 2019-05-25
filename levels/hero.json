@@ -1,0 +1,9 @@
+{
+  "imageURL": "./img/hero.png",
+  "frames": [
+    {
+      "name": "idle",
+      "rect": [231, 227]
+    }
+  ]
+}

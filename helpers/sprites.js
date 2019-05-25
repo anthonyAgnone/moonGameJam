@@ -16,11 +16,10 @@ function loadBackgroundSprites() {
   });
 }
 
-function loadHeroIdle() {
-  return loadImage("./img/idle.png").then(image => {
+function loadHeroSprite() {
+  return loadImage("./img/tempCharSheet.png").then(image => {
     const sprite = new SpriteSheet(image, 231, 227);
-    sprite.define("idle", 0, 0, spriteSize.width, spriteSize.height);
-
+    sprite.define("idle", 1, 2, spriteSize.width, spriteSize.height);
     return sprite;
   });
 }
@@ -35,6 +34,6 @@ function loadStatic() {
 
 module.exports = {
   loadBackgroundSprites: loadBackgroundSprites,
-  loadHeroIdle: loadHeroIdle,
+  loadHeroSprite: loadHeroSprite,
   loadStatic: loadStatic
 };
