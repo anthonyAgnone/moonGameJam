@@ -22,7 +22,8 @@ class KeyboardState {
 
     event.preventDefault();
 
-    const keyState = event.type === "keydown" ? PRESSED : RELEASED;
+
+    const keyState = event.type === 'keydown' ? PRESSED : RELEASED;
 
     if (this.keyStates.get(keyCode) === keyState) {
       return;
@@ -34,7 +35,7 @@ class KeyboardState {
   }
 
   listenTo(window) {
-    ["keydown", "keyup"].forEach(eventName => {
+    ['keydown', 'keyup'].forEach(eventName => {
       window.addEventListener(eventName, event => {
         this.handleEvent(event);
       });

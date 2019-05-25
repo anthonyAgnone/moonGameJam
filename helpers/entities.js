@@ -1,12 +1,21 @@
-const Entity = require("./Entity.js");
-const { loadHeroSprite } = require("./sprites.js");
+const Entity = require('./Entity.js');
+const { loadHeroSprite } = require('./sprites.js');
 
 function createHero() {
   return loadHeroSprite().then(sprite => {
     const hero = new Entity();
+
     let currentFrame;
 
     hero.update = function updateHero(deltaTime) {
+      if (this.pos.x < canvas.width - 200 && this.pos.x > 0) {
+        this.pos.x += this.vel.x * deltaTime;
+      } 
+      
+      if (this.pos.y < canvas.height - 200 && this.pos.y > 0) {
+        this.pos.y += this.vel.y * deltaTime;
+      }
+      
       this.lastPos.x = this.pos.x;
       this.pos.x += this.vel.x * deltaTime;
       this.pos.y += this.vel.y * deltaTime;
