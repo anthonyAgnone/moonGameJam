@@ -148,9 +148,12 @@ Promise.all([
       if (proj[0] > hero.pos.x + 800) {
         remInd.push(index);
       }
+      //console.log(projFrames[index]);
       projFrames[index] += 1;
-      if (projFrames[index] >= projSprites.names.length - 1) {
+      if (projFrames[index] == 5) {
         projFrames[index] = 2;
+      } else if (projFrames[index] == 11) {
+        projFrames[index] = 8;
       }
     });
 
@@ -186,6 +189,13 @@ Promise.all([
                 Math.pow(click.y - hero.pos.y, 2)
             ) < 700
           ) {
+            if (click.x >= hero.pos.x) {
+              hero.facingLeft = false;
+            } else {
+              if (click.x < hero.pos.x) {
+                hero.facingLeft = true;
+              }
+            }
             hero.pos.y += -20;
             hero.grapple = true;
             hero.grapplePos.x = click.x;
@@ -198,16 +208,30 @@ Promise.all([
         }
       });
     } else if (event.button === 2) {
-      projArr.push([
-        hero.pos.x + heroSize.width - 22,
-        hero.pos.y + heroSize.height / 2 - 45,
-        50,
-        50
-      ]);
-      projVecArr.push([20, 0]);
-      projFrames.push(0);
-      hero.shooting = true;
+      if (click.x >= hero.pos.x) {
+        hero.facingLeft = false;
+        projArr.push([
+          hero.pos.x + heroSize.width - 22,
+          hero.pos.y + heroSize.height / 2 - 45,
+          50,
+          50
+        ]);
+        projVecArr.push([20, 0]);
+        projFrames.push(0);
+      } else {
+        hero.facingLeft = true;
+        projArr.push([
+          hero.pos.x - 40,
+          hero.pos.y + heroSize.height / 2 - 45,
+          50,
+          50
+        ]);
+        projVecArr.push([-20, 0]);
+        projFrames.push(6);
+        hero.shootingLeft = true;
+      }
       hero.shootFrame = 0;
+      hero.shooting = true;
     }
   });
 

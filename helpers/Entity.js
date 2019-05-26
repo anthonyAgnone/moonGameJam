@@ -16,6 +16,8 @@ class Entity {
     this.pausedVel = new Vec2(0, 0);
     this.collisionDirection = 'NONE';
     this.shooting = false;
+    this.shootingLeft = false;
+    this.facingLeft = false;
     this.shootFrame = 0;
   }
 }
