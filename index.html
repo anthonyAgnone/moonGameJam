@@ -3,14 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <title>Game Jam</title>
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" type="text/css" href="./css/style.css" />
   </head>
   <body>
     <canvas id="canvas" height="1080" width="1920"></canvas>
+    <div class="menu-screen">
+      <button class="menu-btn" id="start-btn"></button>
+      <button class="menu-btn" id="controls-btn"></button>
+      <button class="menu-btn" id="options-btn"></button>
+      <button class="menu-btn" id="exit-btn"></button>
+    </div>
   </body>
 
   <script>
-    // You can also require other files to run in this process
-    require("./renderer.js");
+    // You can also require other files to  run in this process
+    require("./helpers/menu.js")
   </script>
 </html>
