@@ -24,7 +24,13 @@ function createBackgroundLayer(backgrounds, sprites, camera) {
 
 function createStaticLayer(sprite, camera) {
   return function drawStaticLayer(context) {
-    sprite.draw("static", context, -camera.pos.x * 0.1, -camera.pos.y * 1);
+    sprite.draw("static", context, 0, 0);
+  };
+}
+
+function createScrollingLayer(sprite, camera) {
+  return function drawScrollingLayer(context) {
+    sprite.draw("scrolling", context, -camera.pos.x * 0.2, -camera.pos.y * 0.2);
   };
 }
 
@@ -54,7 +60,7 @@ function createCameraLayer(cameraToDraw) {
       cameraToDraw.size.x,
       cameraToDraw.size.y
     );
-    context.stroke();
+    // context.stroke();
   };
 }
 
@@ -62,5 +68,6 @@ module.exports = {
   createBackgroundLayer: createBackgroundLayer,
   createStaticLayer: createStaticLayer,
   createSpriteLayer: createSpriteLayer,
-  createCameraLayer: createCameraLayer
+  createCameraLayer: createCameraLayer,
+  createScrollingLayer: createScrollingLayer
 };

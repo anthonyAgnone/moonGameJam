@@ -1,6 +1,7 @@
 {
   "backgrounds": [
     {
+      "size": "100",
       "tile": "ground",
       "ranges": [[0, 125, 62, 63]]
     }
