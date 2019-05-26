@@ -15,7 +15,11 @@ const {
 } = require("./helpers/helperFunctions");
 const { collisionDetect } = require("./helpers/collisionDetect");
 
-const { loadBackgroundSprites, loadStatic } = require("./helpers/sprites");
+const {
+  loadStatic,
+  loadScrolling,
+  loadLevelBlocks
+} = require("./helpers/sprites");
 
 const SpritesJS = require("./helpers/sprites.js");
 
@@ -24,6 +28,7 @@ const heroSize = SpritesJS.spriteSize;
 const {
   createBackgroundLayer,
   createStaticLayer,
+  createScrollingLayer,
   createSpriteLayer,
   createCameraLayer
 } = require("./helpers/layers");
@@ -31,14 +36,17 @@ const {
 const canvas = document.getElementById("canvas");
 const context = canvas.getContext("2d");
 
+let currentLevel = "1-1";
+
 // PROMISE ALL PERFORMS FOUR FUNCTIONS AND UPON SUCCESS THE DOT THEN HAPPENS WITH THOSE RESULTS
 
 Promise.all([
   createHero(136, 138),
-  loadBackgroundSprites(),
+  loadLevelBlocks(),
   loadStatic(),
-  loadLevel("1-1")
-]).then(([hero, sprites, staticLayerSprite, level]) => {
+  loadScrolling(),
+  loadLevel(currentLevel)
+]).then(([hero, sprites, staticLayerSprite, scrollingSprite, level]) => {
   // initial globals
   const comp = new Compositor();
   const camera = new Camera();
@@ -46,17 +54,18 @@ Promise.all([
   const gravity = 20;
   const timer = new Timer(1 / 60);
 
-  setInitialPosition(hero, 800, 0);
+  setInitialPosition(hero, 100, 500);
 
   //create Layers
 
   function mapLevelToArray(level) {
     var obs = new Array();
     for (var i = 0; i < level.backgrounds.length; i++) {
+      const size = level.backgrounds[i].size;
       level.backgrounds[i].ranges.forEach(lvl => {
         obs.push(
           lvl.map(function(tmp) {
-            return tmp * 16;
+            return tmp * size;
           })
         );
       });
@@ -67,8 +76,13 @@ Promise.all([
 
   const obstacles = mapLevelToArray(level);
 
+  // console.log(level);
+
   const staticLayer = createStaticLayer(staticLayerSprite, camera);
   comp.layers.push(staticLayer);
+
+  const scrollingLayer = createScrollingLayer(scrollingSprite, camera);
+  comp.layers.push(scrollingLayer);
 
   const backgroundLayer = createBackgroundLayer(
     level.backgrounds,
@@ -123,6 +137,10 @@ Promise.all([
 
   window.addEventListener("mousedown", event => {
     const click = getMousePos(canvas, event);
+    // hero.pos.x = click.x;
+    // hero.pos.y = click.y;
+    // hero.vel.x = 0;
+    // hero.vel.y = 0;
     obstacles.forEach(rect => {
       if (
         click.x < rect[1] &&

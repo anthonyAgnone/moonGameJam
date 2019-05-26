@@ -27,6 +27,8 @@ function createHero(h, w) {
       if (this.vel.x == 0) this.startPoint = this.pos.x;
       currentFrame =
         Math.floor(Math.abs(this.pos.x - this.startPoint) / 30) % frames.length;
+
+      // console.log(this.pos);
     };
 
     const frames = [
