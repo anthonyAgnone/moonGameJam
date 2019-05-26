@@ -1,17 +1,17 @@
-"use strict";
+'use strict';
 
 // DEPENDENCIES AND IMPORTS
 
-const Compositor = require("./helpers/Compositor");
-const Timer = require("./helpers/Timer");
-const { loadLevel } = require("./helpers/loaders.js");
-const { createHero } = require("./helpers/entities");
-const Keyboard = require("./helpers/KeyboardState");
-const Camera = require("./helpers/Camera");
+const Compositor = require('./helpers/Compositor');
+const Timer = require('./helpers/Timer');
+const { loadLevel } = require('./helpers/loaders.js');
+const { createHero } = require('./helpers/entities');
+const Keyboard = require('./helpers/KeyboardState');
+const Camera = require('./helpers/Camera');
 
-const { loadBackgroundSprites, loadStatic } = require("./helpers/sprites");
+const { loadBackgroundSprites, loadStatic } = require('./helpers/sprites');
 
-const SpritesJS = require("./helpers/sprites.js");
+const SpritesJS = require('./helpers/sprites.js');
 
 const heroSize = SpritesJS.spriteSize;
 
@@ -20,10 +20,10 @@ const {
   createStaticLayer,
   createSpriteLayer,
   createCameraLayer
-} = require("./helpers/layers");
+} = require('./helpers/layers');
 
-const canvas = document.getElementById("canvas");
-const context = canvas.getContext("2d");
+const canvas = document.getElementById('canvas');
+const context = canvas.getContext('2d');
 
 function getMousePos(canvas, evt) {
   var rect = canvas.getBoundingClientRect();
@@ -43,15 +43,15 @@ Promise.all([
   createHero(136, 138),
   loadBackgroundSprites(),
   loadStatic(),
-  loadLevel("1-1")
+  loadLevel('1-1')
 ]).then(([hero, sprites, staticLayerSprite, level]) => {
   const comp = new Compositor();
   const camera = new Camera();
   window.camera = camera;
   const gravity = 20;
 
-  hero.pos.set(0, 340);
-  hero.lastPos.set(0, 340);
+  hero.pos.set(800, 0);
+  hero.lastPos.set(800, 0);
   hero.vel.set(0, 0);
 
   const staticLayer = createStaticLayer(staticLayerSprite, camera);
@@ -74,20 +74,39 @@ Promise.all([
     comp.draw(context, camera);
     camera.setPosition(hero.pos.x / 2, camera.pos.y);
     collisionDetect(hero, obstacles, heroSize, deltaTime);
-    context.strokeStyle = "red";
+    context.strokeStyle = 'red';
     context.beginPath();
-    context.rect(
-      hero.pos.x - camera.pos.x,
-      hero.pos.y - camera.pos.y,
-      hero.width,
-      hero.height
-    );
-    context.stroke();
+    // context.rect(
+    //   hero.pos.x - camera.pos.x,
+    //   hero.pos.y - camera.pos.y,
+    //   hero.width,
+    //   hero.height
+    // );
+    //  context.stroke();
+    if (hero.grapple === true) {
+      context.moveTo(
+        hero.pos.x + heroSize.width - camera.pos.x - 20,
+        hero.pos.y //+ heroSize.height / 2 - camera.pos.y
+      );
+      context.lineTo(
+        hero.grapplePos.x - camera.pos.x + 10.5,
+        hero.grapplePos.y - camera.pos.y
+      );
+      //context.fillPattern();
+      context.lineWidth = 5;
+      context.stroke();
+      context.fillRect(
+        hero.grapplePos.x - camera.pos.x,
+        hero.grapplePos.y - camera.pos.y,
+        21,
+        21
+      );
+    }
   };
 
   timer.start();
 
-  var collisionDirection = "NONE";
+  var collisionDirection = 'NONE';
 
   function collisionDetect(hero, obs, heroSize, deltaTime) {
     const leeway = 5;
@@ -107,7 +126,7 @@ Promise.all([
           hero.pos.x < obstacles[1] - leeway &&
           hero.pos.x + heroSize.width > obstacles[0] + leeway
         ) {
-          collisionDirection = "TOP";
+          collisionDirection = 'TOP';
           if (hero.grapple === true) {
             hero.stopped = true;
           }
@@ -118,7 +137,7 @@ Promise.all([
           hero.pos.x < obstacles[1] - leeway &&
           hero.pos.x + heroSize.width > obstacles[0] + leeway
         ) {
-          collisionDirection = "BOTTOM";
+          collisionDirection = 'BOTTOM';
           if (hero.grapple === true) {
             hero.stopped = true;
           }
@@ -137,7 +156,7 @@ Promise.all([
           hero.pos.x < obstacles[1] - leeway &&
           hero.pos.x + heroSize.width > obstacles[1] - leeway
         ) {
-          collisionDirection = "RIGHT";
+          collisionDirection = 'RIGHT';
           if (hero.grapple === true) {
             hero.stopped = true;
           }
@@ -148,7 +167,7 @@ Promise.all([
           hero.pos.x < obstacles[0] + leeway &&
           hero.pos.x + heroSize.width > obstacles[0] + leeway
         ) {
-          collisionDirection = "LEFT";
+          collisionDirection = 'LEFT';
           if (hero.grapple === true) {
             hero.stopped = true;
           }
@@ -160,7 +179,7 @@ Promise.all([
       if (hero.grapple === false) {
         hero.vel.y += gravity;
       }
-      collisionDirection = "NONE";
+      collisionDirection = 'NONE';
     }
     if (hero.stopped === true) {
       hero.vel.set(0, 0);
@@ -189,7 +208,7 @@ Promise.all([
   const input = new Keyboard();
 
   input.listenTo(window);
-  window.addEventListener("mousedown", event => {
+  window.addEventListener('mousedown', event => {
     const click = getMousePos(canvas, event);
     obstacles.forEach(rect => {
       if (
@@ -198,22 +217,29 @@ Promise.all([
         click.y < rect[3] &&
         click.y > rect[2]
       ) {
-        hero.pos.y += -20;
-        hero.grapple = true;
-        hero.grapplePos.x = click.x;
-        hero.grapplePos.y = click.y;
-        hero.vel.set(
-          hero.grapplePos.x - hero.pos.x,
-          hero.grapplePos.y - hero.pos.y
-        );
+        if (
+          Math.sqrt(
+            Math.pow(click.x - hero.pos.x, 2) +
+              Math.pow(click.y - hero.pos.y, 2)
+          ) < 700
+        ) {
+          hero.pos.y += -20;
+          hero.grapple = true;
+          hero.grapplePos.x = click.x;
+          hero.grapplePos.y = click.y;
+          hero.vel.set(
+            hero.grapplePos.x - hero.pos.x,
+            hero.grapplePos.y - hero.pos.y
+          );
+        }
       }
     });
   });
 
-  canvas.addEventListener("mouseup", ({ offsetX, offsetY }) => {
+  canvas.addEventListener('mouseup', ({ offsetX, offsetY }) => {
     hero.grapple = false;
     hero.stopped = false;
-    collisionDirection = "NONE";
+    collisionDirection = 'NONE';
   });
   function overlap(subject, rect) {
     return (

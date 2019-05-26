@@ -6,7 +6,7 @@
     },
     {
       "tile": "boi",
-      "ranges": [[20, 30, 10, 25]]
+      "ranges": [[2, 12, 40, 65]]
     },
     {
       "tile": "tallrect",
