@@ -1,4 +1,4 @@
-const { Vec2 } = require("./math");
+const { Vec2 } = require('./math');
 
 class Entity {
   constructor(h, w) {
@@ -9,6 +9,9 @@ class Entity {
     this.height = h;
     this.width = w;
     this.isFlying = false;
+    this.grapplePos = new Vec2(0, 0);
+    this.grapple = false;
+    this.stopped = false;
   }
 }
 
