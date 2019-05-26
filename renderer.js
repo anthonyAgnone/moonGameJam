@@ -1,80 +1,93 @@
-'use strict';
+"use strict";
 
 // DEPENDENCIES AND IMPORTS
 
-const Compositor = require('./helpers/Compositor');
-const Timer = require('./helpers/Timer');
-const { loadLevel } = require('./helpers/loaders.js');
-const { createHero } = require('./helpers/entities');
-const Keyboard = require('./helpers/KeyboardState');
-const { Vec2 } = require('./helpers/math');
-const { loadBackgroundSprites, loadStatic } = require('./helpers/sprites');
+const Compositor = require("./helpers/Compositor");
+const Timer = require("./helpers/Timer");
+const { loadLevel } = require("./helpers/loaders.js");
+const { createHero } = require("./helpers/entities");
+const Keyboard = require("./helpers/KeyboardState");
+const Camera = require("./helpers/Camera");
 
-const SpritesJS = require('./helpers/sprites.js');
+const { loadBackgroundSprites, loadStatic } = require("./helpers/sprites");
+
+const SpritesJS = require("./helpers/sprites.js");
 
 const heroSize = SpritesJS.spriteSize;
 
 const {
   createBackgroundLayer,
   createStaticLayer,
-  createSpriteLayer
-} = require('./helpers/layers');
+  createSpriteLayer,
+  createCameraLayer
+} = require("./helpers/layers");
 
-const Entity = require('./helpers/Entity');
-
-const canvas = document.getElementById('canvas');
-const context = canvas.getContext('2d');
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
 
 function getMousePos(canvas, evt) {
   var rect = canvas.getBoundingClientRect();
   return {
-    x: ((evt.clientX - rect.left) / (rect.right - rect.left)) * canvas.width,
-    y: ((evt.clientY - rect.top) / (rect.bottom - rect.top)) * canvas.height
+    x:
+      ((evt.clientX - rect.left) / (rect.right - rect.left)) * canvas.width +
+      camera.pos.x,
+    y:
+      ((evt.clientY - rect.top) / (rect.bottom - rect.top)) * canvas.height -
+      camera.pos.y
   };
 }
 
 // PROMISE ALL PERFORMS FOUR FUNCTIONS AND UPON SUCCESS THE DOT THEN HAPPENS WITH THOSE RESULTS
 
 Promise.all([
-  createHero(),
+  createHero(136, 138),
   loadBackgroundSprites(),
   loadStatic(),
-  loadLevel('1-1')
+  loadLevel("1-1")
 ]).then(([hero, sprites, staticLayerSprite, level]) => {
   const comp = new Compositor();
-
+  const camera = new Camera();
+  window.camera = camera;
   const gravity = 20;
 
-  hero.pos.set(50, 90);
-  hero.lastPos.set(50, 90);
+  hero.pos.set(0, 340);
+  hero.lastPos.set(0, 340);
   hero.vel.set(0, 0);
 
-  const staticLayer = createStaticLayer(staticLayerSprite);
+  const staticLayer = createStaticLayer(staticLayerSprite, camera);
   comp.layers.push(staticLayer);
 
-  const backgroundLayer = createBackgroundLayer(level.backgrounds, sprites);
+  const backgroundLayer = createBackgroundLayer(
+    level.backgrounds,
+    sprites,
+    camera
+  );
   comp.layers.push(backgroundLayer);
 
   const heroLayer = createSpriteLayer(hero);
   comp.layers.push(heroLayer);
 
+  comp.layers.push(createCameraLayer(camera));
+
   const timer = new Timer(1 / 60);
   timer.update = function update(deltaTime) {
-    comp.draw(context);
-
+    comp.draw(context, camera);
+    camera.setPosition(hero.pos.x / 2, camera.pos.y);
     collisionDetect(hero, obstacles, heroSize, deltaTime);
-    //console.log(obstacles[0][2]); //  obstacles.forEach(rect => {
-    //  if (hero.pos[1] + heroSize.height > rect[2]) {
-    // hero.pos[1] = rect[2];
-    // console.log()
-    // } else {
-    //  }
-    //   });
+    context.strokeStyle = "red";
+    context.beginPath();
+    context.rect(
+      hero.pos.x - camera.pos.x,
+      hero.pos.y - camera.pos.y,
+      hero.width,
+      hero.height
+    );
+    context.stroke();
   };
 
   timer.start();
 
-  var collisionDirection = 'NONE';
+  var collisionDirection = "NONE";
 
   function collisionDetect(hero, obs, heroSize, deltaTime) {
     const leeway = 5;
@@ -94,6 +107,7 @@ Promise.all([
           hero.pos.x < obstacles[1] - leeway &&
           hero.pos.x + heroSize.width > obstacles[0] + leeway
         ) {
+          collisionDirection = "TOP";
           if (hero.grapple === true) {
             hero.stopped = true;
           }
@@ -104,7 +118,7 @@ Promise.all([
           hero.pos.x < obstacles[1] - leeway &&
           hero.pos.x + heroSize.width > obstacles[0] + leeway
         ) {
-          collisionDirection = 'BOTTOM';
+          collisionDirection = "BOTTOM";
           if (hero.grapple === true) {
             hero.stopped = true;
           }
@@ -123,7 +137,7 @@ Promise.all([
           hero.pos.x < obstacles[1] - leeway &&
           hero.pos.x + heroSize.width > obstacles[1] - leeway
         ) {
-          collisionDirection = 'RIGHT';
+          collisionDirection = "RIGHT";
           if (hero.grapple === true) {
             hero.stopped = true;
           }
@@ -134,7 +148,7 @@ Promise.all([
           hero.pos.x < obstacles[0] + leeway &&
           hero.pos.x + heroSize.width > obstacles[0] + leeway
         ) {
-          collisionDirection = 'LEFT';
+          collisionDirection = "LEFT";
           if (hero.grapple === true) {
             hero.stopped = true;
           }
@@ -146,7 +160,7 @@ Promise.all([
       if (hero.grapple === false) {
         hero.vel.y += gravity;
       }
-      collisionDirection = 'NONE';
+      collisionDirection = "NONE";
     }
     if (hero.stopped === true) {
       hero.vel.set(0, 0);
@@ -155,17 +169,9 @@ Promise.all([
   }
 
   function mapLevelToArray(level) {
-    //x1
-    //x2
-    //y1
-    //y2
-    console.log(level);
     var obs = new Array();
-    //console.log(level.backgrounds.length);
     for (var i = 0; i < level.backgrounds.length; i++) {
-      //console.log(level.backgrounds[i].ranges);
       level.backgrounds[i].ranges.forEach(lvl => {
-        //console.log(lvl);
         obs.push(
           lvl.map(function(tmp) {
             return tmp * 16;
@@ -183,20 +189,8 @@ Promise.all([
   const input = new Keyboard();
 
   input.listenTo(window);
-  var grapplePos = new Vec2(0, 0);
-  window.addEventListener('mousedown', event => {
+  window.addEventListener("mousedown", event => {
     const click = getMousePos(canvas, event);
-    //console.log(level.backgrounds);
-    //hero.pos.set(click.x, click.y);
-    //hero.vel.set(click.x - hero.pos.x, click.y - hero.pos.y);
-
-    //context.moveTo(hero.pos[0], hero.pos[1]);
-    // context.moveTo(0, 0);
-    // context.lineTo(click.x, click.y);
-    // context.stroke();
-    // context.fillRect(click.x, click.y, 100, 100);
-    // const hitTerrain = false;
-    //console.log(click.x + ' ' + click.y);
     obstacles.forEach(rect => {
       if (
         click.x < rect[1] &&
@@ -216,10 +210,10 @@ Promise.all([
     });
   });
 
-  canvas.addEventListener('mouseup', ({ offsetX, offsetY }) => {
+  canvas.addEventListener("mouseup", ({ offsetX, offsetY }) => {
     hero.grapple = false;
     hero.stopped = false;
-    collisionDirection = 'NONE';
+    collisionDirection = "NONE";
   });
   function overlap(subject, rect) {
     return (
@@ -236,17 +230,17 @@ Promise.all([
   }
 
   input.addMapping(68, keyState => {
-    if (keyState > 0) hero.vel.set(300, hero.vel.y);
+    if (keyState > 0) hero.vel.set(150, hero.vel.y);
     else hero.vel.set(0, hero.vel.y);
   });
 
   input.addMapping(65, keyState => {
-    if (keyState > 0) hero.vel.set(-300, hero.vel.y);
+    if (keyState > 0) hero.vel.set(-150, hero.vel.y);
     else hero.vel.set(0, hero.vel.y);
   });
 
   input.addMapping(32, keyState => {
-    if (keyState > 0) hero.vel.set(hero.vel.x, -500);
+    if (keyState > 0 && !hero.isFlying) hero.vel.set(hero.vel.x, -500);
     else {
       hero.vel.set(hero.vel.x, gravity);
     }
@@ -258,7 +252,6 @@ Promise.all([
     let currentVelocity = hero.vel;
     hero.pausedPos.set(currentPosition.x, currentPosition.y);
     hero.pausedVel.set(currentVelocity.x, currentVelocity.y);
-
   });
 
   input.addMapping(83, keyState => {
@@ -266,5 +259,4 @@ Promise.all([
     hero.vel.set(hero.pausedVel.x, hero.pausedVel.y);
     timer.start();
   });
-
 });

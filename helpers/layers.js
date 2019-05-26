@@ -8,7 +8,7 @@ function drawBackground(background, context, sprites) {
   });
 }
 
-function createBackgroundLayer(backgrounds, sprites) {
+function createBackgroundLayer(backgrounds, sprites, camera) {
   const buffer = document.createElement("canvas");
   buffer.width = 1920;
   buffer.height = 1080;
@@ -18,24 +18,49 @@ function createBackgroundLayer(backgrounds, sprites) {
   });
 
   return function drawBackgroundLayer(context) {
-    context.drawImage(buffer, 0, 0);
+    context.drawImage(buffer, -camera.pos.x, -camera.pos.y);
   };
 }
 
-function createStaticLayer(sprite) {
+function createStaticLayer(sprite, camera) {
   return function drawStaticLayer(context) {
-    sprite.draw("static", context, 0, 0);
+    sprite.draw("static", context, -camera.pos.x * 0.1, -camera.pos.y * 1);
   };
 }
 
-function createSpriteLayer(entity) {
-  return function drawSpriteLayer(context) {
-    entity.draw(context);
+function createSpriteLayer(entity, camera) {
+  const spriteBuffer = document.createElement("canvas");
+  spriteBuffer.width = 300;
+  spriteBuffer.height = 300;
+  const spriteBufferContext = spriteBuffer.getContext("2d");
+  return function drawSpriteLayer(context, camera) {
+    spriteBufferContext.clearRect(0, 0, 300, 300);
+    entity.draw(spriteBufferContext);
+    context.drawImage(
+      spriteBuffer,
+      entity.pos.x - camera.pos.x,
+      entity.pos.y - camera.pos.y
+    );
+  };
+}
+
+function createCameraLayer(cameraToDraw) {
+  return function drawCameraRect(context, fromCamera) {
+    context.strokeStyle = "purple";
+    context.beginPath();
+    context.rect(
+      cameraToDraw.pos.x - fromCamera.pos.x,
+      cameraToDraw.pos.y - fromCamera.pos.y,
+      cameraToDraw.size.x,
+      cameraToDraw.size.y
+    );
+    context.stroke();
   };
 }
 
 module.exports = {
   createBackgroundLayer: createBackgroundLayer,
   createStaticLayer: createStaticLayer,
-  createSpriteLayer: createSpriteLayer
+  createSpriteLayer: createSpriteLayer,
+  createCameraLayer: createCameraLayer
 };

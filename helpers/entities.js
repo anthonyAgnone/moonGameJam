@@ -1,9 +1,9 @@
-const Entity = require('./Entity.js');
-const { loadHeroSprite } = require('./sprites.js');
+const Entity = require("./Entity.js");
+const { loadHeroSprite } = require("./sprites.js");
 
-function createHero() {
+function createHero(h, w) {
   return loadHeroSprite().then(sprite => {
-    const hero = new Entity();
+    const hero = new Entity(h, w);
 
     let currentFrame;
 
@@ -19,6 +19,8 @@ function createHero() {
         //this.vel.y = 0;
       }
 
+      if (this.vel.y !== 0) this.isFlying = true;
+
       this.lastPos.x = this.pos.x;
       this.lastPos.y = this.pos.y;
       this.pos.x += this.vel.x * deltaTime;
@@ -26,36 +28,34 @@ function createHero() {
       this.distance = this.vel.x * deltaTime;
       if (this.vel.x == 0) this.startPoint = this.pos.x;
       currentFrame =
-        Math.floor(Math.abs(this.pos.x - this.startPoint) / 21) % frames.length;
-
-      // console.log(this.lastPos.x + ' ' + this.lastPos.y + ' ' + this.distance);
+        Math.floor(Math.abs(this.pos.x - this.startPoint) / 30) % frames.length;
     };
 
     const frames = [
-      'run1',
-      'run2',
-      'run3',
-      'run4',
-      'run5',
-      'run6',
-      'run7',
-      'run8',
-      'run9',
-      'run10',
-      'run11',
-      'run12'
+      "run1",
+      "run2",
+      "run3",
+      "run4",
+      "run5",
+      "run6",
+      "run7",
+      "run8",
+      "run9",
+      "run10",
+      "run11",
+      "run12"
     ];
 
     function routeFrame(hero) {
       if (hero.lastPos.x !== hero.pos.x && hero.lastPos.y == hero.pos.y)
         return frames[currentFrame];
-      else if (hero.vel.y < 0) return 'jump1';
-      else if (hero.vel.y > 0) return 'fall1';
-      return 'idle';
+      else if (hero.vel.y < 0) return "jump1";
+      else if (hero.vel.y > 0) return "fall1";
+      return "idle";
     }
 
     hero.draw = function drawHero(context) {
-      sprite.draw(routeFrame(this), context, this.pos.x, this.pos.y);
+      sprite.draw(routeFrame(this), context, 0, 0);
     };
 
     return hero;
