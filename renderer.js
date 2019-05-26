@@ -22,8 +22,6 @@ const {
   createCameraLayer
 } = require("./helpers/layers");
 
-const Entity = require("./helpers/Entity");
-
 const canvas = document.getElementById("canvas");
 const context = canvas.getContext("2d");
 
@@ -50,7 +48,7 @@ Promise.all([
   const comp = new Compositor();
   const camera = new Camera();
   window.camera = camera;
-  const gravity = 0;
+  const gravity = 20;
 
   hero.pos.set(0, 340);
   hero.lastPos.set(0, 340);
@@ -76,13 +74,15 @@ Promise.all([
     comp.draw(context, camera);
     camera.setPosition(hero.pos.x / 2, camera.pos.y);
     collisionDetect(hero, obstacles, heroSize, deltaTime);
-    //console.log(obstacles[0][2]); //  obstacles.forEach(rect => {
-    //  if (hero.pos[1] + heroSize.height > rect[2]) {
-    // hero.pos[1] = rect[2];
-    // console.log()
-    // } else {
-    //  }
-    //   });
+    context.strokeStyle = "red";
+    context.beginPath();
+    context.rect(
+      hero.pos.x - camera.pos.x,
+      hero.pos.y - camera.pos.y,
+      hero.width,
+      hero.height
+    );
+    context.stroke();
   };
 
   timer.start();
@@ -103,61 +103,75 @@ Promise.all([
         // we have hit a platform, but from what direction
         if (
           hero.pos.y + heroSize.height > obstacles[2] + leeway &&
-          hero.pos.y + heroSize.height < obstacles[3] + leeway &&
+          hero.pos.y < obstacles[2] + leeway &&
           hero.pos.x < obstacles[1] - leeway &&
           hero.pos.x + heroSize.width > obstacles[0] + leeway
         ) {
           collisionDirection = "TOP";
+          if (hero.grapple === true) {
+            hero.stopped = true;
+          }
+          hero.pos.y = obstacles[2] - heroSize.height;
         } else if (
           hero.pos.y < obstacles[3] - leeway &&
-          hero.pos.y > obstacles[2] + leeway &&
+          hero.pos.y + heroSize.height > obstacles[3] - leeway &&
           hero.pos.x < obstacles[1] - leeway &&
           hero.pos.x + heroSize.width > obstacles[0] + leeway
         ) {
           collisionDirection = "BOTTOM";
+          if (hero.grapple === true) {
+            hero.stopped = true;
+          }
+          hero.pos.y = obstacles[3];
+          if (hero.pos.x < obstacles[0] - heroSize.width / 2) {
+            hero.pos.x = obstacles[0] - heroSize.width / 2;
+          } else if (
+            hero.pos.x + heroSize.width >
+            obstacles[1] + heroSize.width / 2
+          ) {
+            hero.pos.x = obstacles[1] - heroSize.width / 2;
+          }
         } else if (
+          hero.pos.y < obstacles[3] - leeway &&
+          hero.pos.y + heroSize.height > obstacles[2] + leeway &&
           hero.pos.x < obstacles[1] - leeway &&
-          hero.pos.x + heroSize.width > obstacles[1] + leeway
+          hero.pos.x + heroSize.width > obstacles[1] - leeway
         ) {
           collisionDirection = "RIGHT";
+          if (hero.grapple === true) {
+            hero.stopped = true;
+          }
+          hero.pos.x = obstacles[1] - leeway;
         } else if (
-          hero.pos.x < obstacles[0] - leeway &&
+          hero.pos.y < obstacles[3] - leeway &&
+          hero.pos.y + heroSize.height > obstacles[2] + leeway &&
+          hero.pos.x < obstacles[0] + leeway &&
           hero.pos.x + heroSize.width > obstacles[0] + leeway
         ) {
           collisionDirection = "LEFT";
+          if (hero.grapple === true) {
+            hero.stopped = true;
+          }
+          hero.pos.x = obstacles[0] - heroSize.width + leeway;
         }
       }
     });
-    if (collision == false) {
-      //console.log(hero.pos.x + ' ' + obstacles[1]);
-      hero.update(deltaTime);
-      hero.vel.y += gravity;
+    if (collision === false) {
+      if (hero.grapple === false) {
+        hero.vel.y += gravity;
+      }
       collisionDirection = "NONE";
-    } else if (collision) {
-      hero.vel.x = 0;
     }
-    context.strokeStyle = "red";
-    context.beginPath();
-    context.rect(
-      hero.pos.x - camera.pos.x,
-      hero.pos.y - camera.pos.y,
-      hero.width,
-      hero.height
-    );
-    context.stroke();
+    if (hero.stopped === true) {
+      hero.vel.set(0, 0);
+    }
+    hero.update(deltaTime);
   }
 
   function mapLevelToArray(level) {
-    //x1
-    //x2
-    //y1
-    //y2
     var obs = new Array();
-    //console.log(level.backgrounds.length);
     for (var i = 0; i < level.backgrounds.length; i++) {
-      //console.log(level.backgrounds[i].ranges);
       level.backgrounds[i].ranges.forEach(lvl => {
-        //console.log(lvl);
         obs.push(
           lvl.map(function(tmp) {
             return tmp * 16;
@@ -169,25 +183,14 @@ Promise.all([
     return obs;
   }
 
+  var grapple = false;
   const obstacles = mapLevelToArray(level);
   // input listeners
   const input = new Keyboard();
 
   input.listenTo(window);
-
   window.addEventListener("mousedown", event => {
     const click = getMousePos(canvas, event);
-    //console.log(level.backgrounds);
-    hero.pos.set(click.x, click.y);
-    hero.vel.set(200, -200);
-
-    //context.moveTo(hero.pos[0], hero.pos[1]);
-    // context.moveTo(0, 0);
-    // context.lineTo(click.x, click.y);
-    // context.stroke();
-    // context.fillRect(click.x, click.y, 100, 100);
-    // const hitTerrain = false;
-    //console.log(click.x + ' ' + click.y);
     obstacles.forEach(rect => {
       if (
         click.x < rect[1] &&
@@ -195,18 +198,22 @@ Promise.all([
         click.y < rect[3] &&
         click.y > rect[2]
       ) {
-        console.log("HIT");
-        // grapple = true;
-        // desired.x = offsetX;
-        //desired.y = offsetY;
+        hero.pos.y += -20;
+        hero.grapple = true;
+        hero.grapplePos.x = click.x;
+        hero.grapplePos.y = click.y;
+        hero.vel.set(
+          hero.grapplePos.x - hero.pos.x,
+          hero.grapplePos.y - hero.pos.y
+        );
       }
     });
   });
 
   canvas.addEventListener("mouseup", ({ offsetX, offsetY }) => {
-    // grapple = false;
-    // followers[0].stopped = false;
-    // followers[0].stopping = false;
+    hero.grapple = false;
+    hero.stopped = false;
+    collisionDirection = "NONE";
   });
   function overlap(subject, rect) {
     return (
@@ -237,5 +244,19 @@ Promise.all([
     else {
       hero.vel.set(hero.vel.x, gravity);
     }
+  });
+
+  input.addMapping(27, keyState => {
+    timer.pause();
+    let currentPosition = hero.pos;
+    let currentVelocity = hero.vel;
+    hero.pausedPos.set(currentPosition.x, currentPosition.y);
+    hero.pausedVel.set(currentVelocity.x, currentVelocity.y);
+  });
+
+  input.addMapping(83, keyState => {
+    hero.pos.set(hero.pausedPos.x, hero.pausedPos.y);
+    hero.vel.set(hero.pausedVel.x, hero.pausedVel.y);
+    timer.start();
   });
 });

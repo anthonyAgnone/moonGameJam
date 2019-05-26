@@ -1,0 +1,76 @@
+
+#canvas {
+    display: none;
+    margin-top: -8px;
+    margin-left: -8px;
+}
+
+/* MENU STYLES */
+
+.menu-screen {
+    background-color: #cccccc;
+    background-image: url("../img/menuAssets/titleScreen.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: #cccccc;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding-top: 50px;
+    
+}
+
+.menu-btn {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 100px;
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    outline-style: none;
+    cursor: pointer;
+    margin: 15px 0;
+}
+
+#start-btn {
+    background-image: url("../img/menuAssets/startGame.png");
+}
+
+#start-btn:hover {
+    background-image: url("../img/menuAssets/startGameSelected.png");
+}
+
+#controls-btn {
+    background-image: url("../img/menuAssets/controls.png");
+}
+
+#controls-btn:hover {
+    background-image: url("../img/menuAssets/controlsSelected.png");
+}
+
+#options-btn {
+    background-image: url("../img/menuAssets/options.png");
+}
+
+#options-btn:hover {
+    background-image: url("../img/menuAssets/optionsSelected.png");
+}
+
+#exit-btn {
+    background-image: url("../img/menuAssets/exitToDesktop.png");
+}
+
+#exit-btn:hover {
+    background-image: url("../img/menuAssets/exitToDesktopSelected.png");
+
+}
+
+

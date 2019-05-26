@@ -9,18 +9,20 @@ function createHero(h, w) {
 
     hero.update = function updateHero(deltaTime) {
       if (this.pos.x < canvas.width - 200 && this.pos.x > 0) {
-        this.pos.x += this.vel.x * deltaTime;
+        this.pos.x += this.vel.x * deltaTime * 0.5;
       }
 
       if (this.pos.y < canvas.height - 200 && this.pos.y > 0) {
-        this.pos.y += this.vel.y * deltaTime;
+        this.pos.y += this.vel.y * deltaTime * 0.5;
+      } else {
+        // this.vel.x = 0;
+        //this.vel.y = 0;
       }
 
       if (this.vel.y !== 0) this.isFlying = true;
 
-      console.log(this.isFlying);
-
       this.lastPos.x = this.pos.x;
+      this.lastPos.y = this.pos.y;
       this.pos.x += this.vel.x * deltaTime;
       this.pos.y += this.vel.y * deltaTime;
       this.distance = this.vel.x * deltaTime;
