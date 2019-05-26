@@ -59,7 +59,7 @@ Promise.all([
     const comp = new Compositor();
     const camera = new Camera();
     window.camera = camera;
-    const gravity = 20;
+    const gravity = 30;
     const timer = new Timer(1 / 60);
 
     setInitialPosition(hero, 100, 500);
@@ -108,7 +108,7 @@ Promise.all([
 
     timer.update = function update(deltaTime) {
       comp.draw(context, camera);
-      camera.setPosition(hero.pos.x / 2, camera.pos.y);
+      camera.setPosition(hero.pos.x * 0.8, hero.pos.y * 0.05);
 
       collisionDetect(hero, obstacles, heroSize, deltaTime, gravity);
       context.strokeStyle = "red";
@@ -120,7 +120,7 @@ Promise.all([
       if (hero.grapple === true) {
         context.moveTo(
           hero.pos.x + heroSize.width - camera.pos.x - 20,
-          hero.pos.y //+ heroSize.height / 2 - camera.pos.y
+          hero.pos.y + heroSize.height / 2 - camera.pos.y
         );
         context.lineTo(
           hero.grapplePos.x - camera.pos.x + 10.5,
@@ -188,6 +188,7 @@ Promise.all([
     var projFrames = [];
     window.addEventListener("mousedown", event => {
       const click = getMousePos(canvas, event);
+      click.y += camera.pos.y + 30;
       if (event.button === 0) {
         obstacles.forEach(rect => {
           if (

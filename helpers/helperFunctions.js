@@ -7,17 +7,22 @@ function setInitialPosition(hero, x, y) {
 
 function addKeyMapping(window, input, hero, gravity, timer) {
   input.addMapping(68, keyState => {
-    if (keyState > 0) {
-      hero.vel.set(250, hero.vel.y);
-      hero.facingLeft = false;
-    } else hero.vel.set(0, hero.vel.y);
+    console.log(keyState);
+    if (!hero.grapple) {
+      if (keyState > 0) {
+        hero.vel.set(400, hero.vel.y);
+        hero.facingLeft = false;
+      } else hero.vel.set(0, hero.vel.y);
+    }
   });
 
   input.addMapping(65, keyState => {
-    if (keyState > 0) {
-      hero.vel.set(-250, hero.vel.y);
-      hero.facingLeft = true;
-    } else hero.vel.set(0, hero.vel.y);
+    if (!hero.grapple) {
+      if (keyState > 0) {
+        hero.vel.set(-400, hero.vel.y);
+        hero.facingLeft = true;
+      } else hero.vel.set(0, hero.vel.y);
+    }
   });
 
   input.addMapping(32, keyState => {
@@ -27,7 +32,7 @@ function addKeyMapping(window, input, hero, gravity, timer) {
         (hero.collisionDirection !== "BOTTOM" &&
           hero.collisionDirection !== "NONE"))
     )
-      hero.vel.set(hero.vel.x, -600);
+      hero.vel.set(hero.vel.x, -900);
     else hero.vel.set(hero.vel.x, gravity);
   });
 

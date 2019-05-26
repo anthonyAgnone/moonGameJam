@@ -10,7 +10,7 @@ function drawBackground(background, context, sprites) {
 
 function createBackgroundLayer(backgrounds, sprites, camera) {
   const buffer = document.createElement("canvas");
-  buffer.width = 1920;
+  buffer.width = 30920;
   buffer.height = 1080;
 
   backgrounds.forEach(background => {
@@ -30,7 +30,7 @@ function createStaticLayer(sprite, camera) {
 
 function createScrollingLayer(sprite, camera) {
   return function drawScrollingLayer(context) {
-    sprite.draw("scrolling", context, -camera.pos.x * 0.2, -camera.pos.y * 0.2);
+    sprite.draw("scrolling", context, 0, 0);
   };
 }
 
