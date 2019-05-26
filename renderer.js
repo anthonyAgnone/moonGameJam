@@ -6,8 +6,8 @@ const Compositor = require('./helpers/Compositor');
 const Timer = require('./helpers/Timer');
 const { loadLevel } = require('./helpers/loaders.js');
 const { createHero } = require('./helpers/entities');
-const Keyboard = require("./helpers/KeyboardState");
-
+const Keyboard = require('./helpers/KeyboardState');
+const { Vec2 } = require('./helpers/math');
 const { loadBackgroundSprites, loadStatic } = require('./helpers/sprites');
 
 const SpritesJS = require('./helpers/sprites.js');
@@ -90,37 +90,68 @@ Promise.all([
         // we have hit a platform, but from what direction
         if (
           hero.pos.y + heroSize.height > obstacles[2] + leeway &&
-          hero.pos.y + heroSize.height < obstacles[3] + leeway &&
+          hero.pos.y < obstacles[2] + leeway &&
           hero.pos.x < obstacles[1] - leeway &&
           hero.pos.x + heroSize.width > obstacles[0] + leeway
         ) {
-          collisionDirection = 'TOP';
+          if (hero.grapple === true) {
+            hero.stopped = true;
+          }
+          hero.pos.y = obstacles[2] - heroSize.height;
         } else if (
           hero.pos.y < obstacles[3] - leeway &&
-          hero.pos.y > obstacles[2] + leeway &&
+          hero.pos.y + heroSize.height > obstacles[3] - leeway &&
           hero.pos.x < obstacles[1] - leeway &&
           hero.pos.x + heroSize.width > obstacles[0] + leeway
         ) {
           collisionDirection = 'BOTTOM';
+          if (hero.grapple === true) {
+            hero.stopped = true;
+          }
+          hero.pos.y = obstacles[3];
+          if (hero.pos.x < obstacles[0] - heroSize.width / 2) {
+            hero.pos.x = obstacles[0] - heroSize.width / 2;
+          } else if (
+            hero.pos.x + heroSize.width >
+            obstacles[1] + heroSize.width / 2
+          ) {
+            hero.pos.x = obstacles[1] - heroSize.width / 2;
+          }
         } else if (
+          hero.pos.y < obstacles[3] - leeway &&
+          hero.pos.y + heroSize.height > obstacles[2] + leeway &&
           hero.pos.x < obstacles[1] - leeway &&
-          hero.pos.x + heroSize.width > obstacles[1] + leeway
+          hero.pos.x + heroSize.width > obstacles[1] - leeway
         ) {
           collisionDirection = 'RIGHT';
+          if (hero.grapple === true) {
+            hero.stopped = true;
+          }
+          hero.pos.x = obstacles[1] - leeway;
         } else if (
-          hero.pos.x < obstacles[0] - leeway &&
+          hero.pos.y < obstacles[3] - leeway &&
+          hero.pos.y + heroSize.height > obstacles[2] + leeway &&
+          hero.pos.x < obstacles[0] + leeway &&
           hero.pos.x + heroSize.width > obstacles[0] + leeway
         ) {
           collisionDirection = 'LEFT';
+          if (hero.grapple === true) {
+            hero.stopped = true;
+          }
+          hero.pos.x = obstacles[0] - heroSize.width + leeway;
         }
       }
     });
     if (collision === false) {
-      //console.log(hero.pos.x + ' ' + obstacles[1]);
-      hero.update(deltaTime);
-      hero.vel.y += gravity;
+      if (hero.grapple === false) {
+        hero.vel.y += gravity;
+      }
       collisionDirection = 'NONE';
     }
+    if (hero.stopped === true) {
+      hero.vel.set(0, 0);
+    }
+    hero.update(deltaTime);
   }
 
   function mapLevelToArray(level) {
@@ -146,17 +177,18 @@ Promise.all([
     return obs;
   }
 
+  var grapple = false;
   const obstacles = mapLevelToArray(level);
   // input listeners
   const input = new Keyboard();
 
   input.listenTo(window);
-
+  var grapplePos = new Vec2(0, 0);
   window.addEventListener('mousedown', event => {
     const click = getMousePos(canvas, event);
     //console.log(level.backgrounds);
-    hero.pos.set(click.x, click.y);
-    hero.vel.set(200, -200);
+    //hero.pos.set(click.x, click.y);
+    //hero.vel.set(click.x - hero.pos.x, click.y - hero.pos.y);
 
     //context.moveTo(hero.pos[0], hero.pos[1]);
     // context.moveTo(0, 0);
@@ -172,18 +204,22 @@ Promise.all([
         click.y < rect[3] &&
         click.y > rect[2]
       ) {
-        console.log('HIT');
-        // grapple = true;
-        // desired.x = offsetX;
-        //desired.y = offsetY;
+        hero.pos.y += -20;
+        hero.grapple = true;
+        hero.grapplePos.x = click.x;
+        hero.grapplePos.y = click.y;
+        hero.vel.set(
+          hero.grapplePos.x - hero.pos.x,
+          hero.grapplePos.y - hero.pos.y
+        );
       }
     });
   });
 
   canvas.addEventListener('mouseup', ({ offsetX, offsetY }) => {
-    // grapple = false;
-    // followers[0].stopped = false;
-    // followers[0].stopping = false;
+    hero.grapple = false;
+    hero.stopped = false;
+    collisionDirection = 'NONE';
   });
   function overlap(subject, rect) {
     return (

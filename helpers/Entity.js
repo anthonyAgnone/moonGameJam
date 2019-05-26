@@ -1,4 +1,4 @@
-const { Vec2 } = require("./math");
+const { Vec2 } = require('./math');
 
 class Entity {
   constructor() {
@@ -6,6 +6,9 @@ class Entity {
     this.vel = new Vec2(0, 0);
     this.lastPos = new Vec2(0, 0);
     this.startPoint = this.pos.x;
+    this.grapplePos = new Vec2(0, 0);
+    this.grapple = false;
+    this.stopped = false;
     this.pausedPos = new Vec2(0,0);
     this.pausedVel = new Vec2(0,0);
   }
