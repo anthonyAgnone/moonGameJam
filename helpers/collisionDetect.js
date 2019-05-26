@@ -1,6 +1,7 @@
 function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
   const leeway = 5;
   var collision = false;
+  var collisionDirection = "NONE";
   obs.forEach(obstacles => {
     if (
       hero.pos.y + heroSize.height > obstacles[2] + leeway &&
@@ -75,6 +76,7 @@ function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
     hero.vel.set(0, 0);
   }
   hero.update(deltaTime);
+  hero.collisionDirection = collisionDirection;
 }
 
 module.exports = {

@@ -16,10 +16,9 @@ function addKeyMapping(window, input, hero, gravity, timer) {
   });
 
   input.addMapping(32, keyState => {
-    if (keyState > 0 && !hero.isFlying) hero.vel.set(hero.vel.x, -500);
-    else {
-      hero.vel.set(hero.vel.x, gravity);
-    }
+    if (keyState > 0 && (!hero.isFlying || hero.collisionDirection !== "NONE"))
+      hero.vel.set(hero.vel.x, -500);
+    else hero.vel.set(hero.vel.x, gravity);
   });
 
   input.addMapping(27, keyState => {

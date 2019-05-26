@@ -1,5 +1,5 @@
-const Entity = require('./Entity.js');
-const { loadHeroSprite } = require('./sprites.js');
+const Entity = require("./Entity.js");
+const { loadHeroSprite } = require("./sprites.js");
 
 function createHero(h, w) {
   return loadHeroSprite().then(sprite => {
@@ -21,6 +21,8 @@ function createHero(h, w) {
       this.lastPos.y = this.pos.y;
       this.pos.x += this.vel.x * deltaTime;
       this.pos.y += this.vel.y * deltaTime;
+      if (!this.isFlying || this.collisionDirection == "TOP")
+        this.lastPos.y = this.pos.y;
       this.distance = this.vel.x * deltaTime;
       if (this.vel.x == 0) this.startPoint = this.pos.x;
       currentFrame =
@@ -28,28 +30,28 @@ function createHero(h, w) {
     };
 
     const frames = [
-      'run1',
-      'run2',
-      'run3',
-      'run4',
-      'run5',
-      'run6',
-      'run7',
-      'run8',
-      'run9',
-      'run10',
-      'run11',
-      'run12'
+      "run1",
+      "run2",
+      "run3",
+      "run4",
+      "run5",
+      "run6",
+      "run7",
+      "run8",
+      "run9",
+      "run10",
+      "run11",
+      "run12"
     ];
 
     function routeFrame(hero) {
       if (hero.lastPos.x !== hero.pos.x && hero.lastPos.y == hero.pos.y)
         return frames[currentFrame];
-      else if (hero.grapple === true) {
-        return 'grapple';
-      } else if (hero.vel.y < 0) return 'jump1';
-      else if (hero.vel.y > 0) return 'fall1';
-      return 'idle';
+      else if (hero.grapple === true) return "grapple";
+      else if (hero.vel.y < 0) return "jump1";
+      else if (hero.vel.y > 0 && hero.collisionDirection == "NONE")
+        return "fall1";
+      return "idle";
     }
 
     hero.draw = function drawHero(context) {
