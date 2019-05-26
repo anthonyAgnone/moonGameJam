@@ -1,14 +1,21 @@
 {
-  "name": "gamejam",
+  "name": "NailGameJam",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A minimal Electron application",
+  "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
-  "author": "",
-  "license": "ISC",
+  "repository": "",
+  "keywords": [],
+  "author": "GitHub",
+  "devDependencies": {
+    "electron": "^1.4.1"
+  },
   "dependencies": {
-    "electron": "^5.0.2"
+    "electron-reload": "^1.4.0",
+    "electron-screenshot": "^1.0.3",
+    "fs-jetpack": "^0.12.0",
+    "jquery": "^3.4.1"
   }
 }

@@ -1,0 +1,54 @@
+{
+  "backgrounds": [
+    {
+      "size": "100",
+      "tile": "ground",
+      "ranges": [[0, 10, 10, 11], [13, 20, 10, 11]]
+    },
+    {
+      "size": "100",
+      "tile": "gP0",
+      "ranges": [[4, 5, 8, 9]]
+    },
+    {
+      "size": "100",
+      "tile": "gP2",
+      "ranges": [[5, 6, 8, 9]]
+    },
+    {
+      "size": "100",
+      "tile": "gP1",
+      "ranges": [[4, 5, 9, 10]]
+    },
+    {
+      "size": "100",
+      "tile": "gP3",
+      "ranges": [[5, 6, 9, 10]]
+    },
+    {
+      "size": "100",
+      "tile": "arch0",
+      "ranges": [[9, 10, 6, 7]]
+    },
+    {
+      "size": "100",
+      "tile": "arch1",
+      "ranges": [[10, 11, 6, 7]]
+    },
+    {
+      "size": "100",
+      "tile": "arch2",
+      "ranges": [[9, 10, 7, 8]]
+    },
+    {
+      "size": "100",
+      "tile": "arch3",
+      "ranges": [[10, 11, 7, 8]]
+    },
+    {
+      "size": "100",
+      "tile": "arch4",
+      "ranges": [[9, 10, 8, 9]]
+    }
+  ]
+}
