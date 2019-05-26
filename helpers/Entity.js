@@ -6,6 +6,8 @@ class Entity {
     this.vel = new Vec2(0, 0);
     this.lastPos = new Vec2(0, 0);
     this.startPoint = this.pos.x;
+    this.pausedPos = new Vec2(0,0);
+    this.pausedVel = new Vec2(0,0);
   }
 }
 

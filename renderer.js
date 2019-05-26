@@ -216,4 +216,19 @@ Promise.all([
     }
   });
 
+  input.addMapping(27, keyState => {
+    timer.pause();
+    let currentPosition = hero.pos;
+    let currentVelocity = hero.vel;
+    hero.pausedPos.set(currentPosition.x, currentPosition.y);
+    hero.pausedVel.set(currentVelocity.x, currentVelocity.y);
+
+  });
+
+  input.addMapping(83, keyState => {
+    hero.pos.set(hero.pausedPos.x, hero.pausedPos.y);
+    hero.vel.set(hero.pausedVel.x, hero.pausedVel.y);
+    timer.start();
+  });
+
 });

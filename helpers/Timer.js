@@ -3,6 +3,8 @@ class Timer {
     let accumulatedTime = 0;
     let lastTime = 0;
 
+    this.requestId;
+
     this.updateProxy = time => {
       accumulatedTime += (time - lastTime) / 1000;
 
@@ -15,15 +17,26 @@ class Timer {
 
       this.enqueue();
     };
+
+    this.pauseProxy = time => {
+      accumulatedTime = deltaTime;
+    };
   }
 
   enqueue() {
-    requestAnimationFrame(this.updateProxy);
+    this.requestId = requestAnimationFrame(this.updateProxy);
   }
 
   start() {
     this.enqueue();
     console.log(this);
+  }
+
+  pause() {
+    if (this.requestId) {
+      cancelAnimationFrame(this.requestId)
+      this.requestId = undefined;
+    }
   }
 }
 
