@@ -1,4 +1,5 @@
 function setInitialPosition(hero, x, y) {
+  //console.log(hero);
   hero.pos.set(x, y);
   hero.lastPos.set(x, y);
   hero.vel.set(0, 0);
@@ -6,13 +7,17 @@ function setInitialPosition(hero, x, y) {
 
 function addKeyMapping(window, input, hero, gravity, timer) {
   input.addMapping(68, keyState => {
-    if (keyState > 0) hero.vel.set(250, hero.vel.y);
-    else hero.vel.set(0, hero.vel.y);
+    if (keyState > 0) {
+      hero.vel.set(250, hero.vel.y);
+      hero.facingLeft = false;
+    } else hero.vel.set(0, hero.vel.y);
   });
 
   input.addMapping(65, keyState => {
-    if (keyState > 0) hero.vel.set(-250, hero.vel.y);
-    else hero.vel.set(0, hero.vel.y);
+    if (keyState > 0) {
+      hero.vel.set(-250, hero.vel.y);
+      hero.facingLeft = true;
+    } else hero.vel.set(0, hero.vel.y);
   });
 
   input.addMapping(32, keyState => {
@@ -40,7 +45,6 @@ function addKeyMapping(window, input, hero, gravity, timer) {
     timer.start();
   });
 }
-
 module.exports = {
   setInitialPosition: setInitialPosition,
   addKeyMapping: addKeyMapping
