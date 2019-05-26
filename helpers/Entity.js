@@ -9,6 +9,8 @@ class Entity {
     this.grapplePos = new Vec2(0, 0);
     this.grapple = false;
     this.stopped = false;
+    this.pausedPos = new Vec2(0,0);
+    this.pausedVel = new Vec2(0,0);
   }
 }
 
