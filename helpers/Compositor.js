@@ -3,9 +3,9 @@ class Compositor {
     this.layers = [];
   }
 
-  draw(context) {
+  draw(context, camera) {
     this.layers.forEach(layer => {
-      layer(context);
+      layer(context, camera);
     });
   }
 }

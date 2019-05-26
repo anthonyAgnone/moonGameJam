@@ -1,30 +1,32 @@
-const Entity = require('./Entity.js');
-const { loadHeroSprite } = require('./sprites.js');
+const Entity = require("./Entity.js");
+const { loadHeroSprite } = require("./sprites.js");
 
-function createHero() {
+function createHero(h, w) {
   return loadHeroSprite().then(sprite => {
-    const hero = new Entity();
+    const hero = new Entity(h, w);
 
     let currentFrame;
 
     hero.update = function updateHero(deltaTime) {
       if (this.pos.x < canvas.width - 200 && this.pos.x > 0) {
         this.pos.x += this.vel.x * deltaTime;
-      } 
-      
+      }
+
       if (this.pos.y < canvas.height - 200 && this.pos.y > 0) {
         this.pos.y += this.vel.y * deltaTime;
       }
-      
+
+      if (this.vel.y !== 0) this.isFlying = true;
+
+      console.log(this.isFlying);
+
       this.lastPos.x = this.pos.x;
       this.pos.x += this.vel.x * deltaTime;
       this.pos.y += this.vel.y * deltaTime;
       this.distance = this.vel.x * deltaTime;
       if (this.vel.x == 0) this.startPoint = this.pos.x;
       currentFrame =
-        Math.floor(Math.abs(this.pos.x - this.startPoint) / 21) % frames.length;
-
-      console.log(currentFrame);
+        Math.floor(Math.abs(this.pos.x - this.startPoint) / 30) % frames.length;
     };
 
     const frames = [
@@ -51,7 +53,7 @@ function createHero() {
     }
 
     hero.draw = function drawHero(context) {
-      sprite.draw(routeFrame(this), context, this.pos.x, this.pos.y);
+      sprite.draw(routeFrame(this), context, 0, 0);
     };
 
     return hero;
