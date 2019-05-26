@@ -4,14 +4,15 @@ class SpriteSheet {
     this.width = w;
     this.height = h;
     this.tiles = new Map();
+    this.names = [];
   }
 
   define(name, x, y, width, height) {
-    const buffer = document.createElement("canvas");
+    const buffer = document.createElement('canvas');
     buffer.height = this.height;
     buffer.width = this.width;
     buffer
-      .getContext("2d")
+      .getContext('2d')
       .drawImage(
         this.image,
         this.width * x,
@@ -23,6 +24,7 @@ class SpriteSheet {
         width,
         height
       );
+    this.names.push(name);
     this.tiles.set(name, buffer);
   }
 

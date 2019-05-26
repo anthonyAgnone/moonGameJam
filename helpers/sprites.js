@@ -16,6 +16,18 @@ function loadBackgroundSprites() {
   });
 }
 
+function loadProjectileSprites() {
+  return loadImage('./img/spriteSheetFireball.png').then(image => {
+    const sprites = new SpriteSheet(image, 88, 43);
+    sprites.define('fireball1', 0, 0, 88, 43);
+    sprites.define('fireball2', 1, 0, 88, 43);
+    sprites.define('fireball3', 2, 0, 88, 43);
+    sprites.define('fireball4', 3, 0, 88, 43);
+    sprites.define('fireball5', 4, 0, 88, 43);
+    sprites.define('fireball6', 5, 0, 88, 43);
+    return sprites;
+  });
+}
 function loadHeroSprite() {
   return loadImage('./img/main.png').then(image => {
     const sprite = new SpriteSheet(image, 231, 227);
@@ -35,6 +47,13 @@ function loadHeroSprite() {
     sprite.define('jump1', 1, 4, spriteSize.width, spriteSize.height);
     sprite.define('fall1', 4, 3, spriteSize.width, spriteSize.height);
     sprite.define('grapple', 2, 2, spriteSize.width, spriteSize.height);
+    sprite.define('shoot', 3, 3, spriteSize.width, spriteSize.height);
+    sprite.define('hangBottom', 1, 3, spriteSize.width, spriteSize.height);
+    sprite.define('hangRight', 5, 2, spriteSize.width, spriteSize.height);
+    sprite.define('hangLeft', 5, 2, spriteSize.width, spriteSize.height);
+    sprite.define('hangBottomShoot', 2, 3, spriteSize.width, spriteSize.height);
+    sprite.define('hangRightShoot', 0, 3, spriteSize.width, spriteSize.height);
+    sprite.define('hangLeftShoot', 0, 3, spriteSize.width, spriteSize.height);
     return sprite;
   });
 }
@@ -51,5 +70,6 @@ module.exports = {
   loadBackgroundSprites: loadBackgroundSprites,
   loadHeroSprite: loadHeroSprite,
   loadStatic: loadStatic,
-  spriteSize: spriteSize
+  spriteSize: spriteSize,
+  loadProjectileSprites: loadProjectileSprites
 };

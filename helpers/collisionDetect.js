@@ -1,7 +1,7 @@
 function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
   const leeway = 5;
   var collision = false;
-  var collisionDirection = "NONE";
+  var collisionDirection = hero.collisionDirection;
   obs.forEach(obstacles => {
     if (
       hero.pos.y + heroSize.height > obstacles[2] + leeway &&
@@ -17,7 +17,7 @@ function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
         hero.pos.x < obstacles[1] - leeway &&
         hero.pos.x + heroSize.width > obstacles[0] + leeway
       ) {
-        collisionDirection = "TOP";
+        collisionDirection = 'TOP';
         if (hero.grapple === true) {
           hero.stopped = true;
         }
@@ -28,7 +28,7 @@ function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
         hero.pos.x < obstacles[1] - leeway &&
         hero.pos.x + heroSize.width > obstacles[0] + leeway
       ) {
-        collisionDirection = "BOTTOM";
+        collisionDirection = 'BOTTOM';
         if (hero.grapple === true) {
           hero.stopped = true;
         }
@@ -47,7 +47,7 @@ function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
         hero.pos.x < obstacles[1] - leeway &&
         hero.pos.x + heroSize.width > obstacles[1] - leeway
       ) {
-        collisionDirection = "RIGHT";
+        collisionDirection = 'RIGHT';
         if (hero.grapple === true) {
           hero.stopped = true;
         }
@@ -58,7 +58,7 @@ function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
         hero.pos.x < obstacles[0] + leeway &&
         hero.pos.x + heroSize.width > obstacles[0] + leeway
       ) {
-        collisionDirection = "LEFT";
+        collisionDirection = 'LEFT';
         if (hero.grapple === true) {
           hero.stopped = true;
         }
@@ -69,8 +69,8 @@ function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
   if (collision === false) {
     if (hero.grapple === false) {
       hero.vel.y += gravity;
+      collisionDirection = 'NONE';
     }
-    collisionDirection = "NONE";
   }
   if (hero.stopped === true) {
     hero.vel.set(0, 0);

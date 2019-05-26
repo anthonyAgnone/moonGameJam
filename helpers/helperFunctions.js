@@ -1,4 +1,5 @@
 function setInitialPosition(hero, x, y) {
+  //console.log(hero);
   hero.pos.set(x, y);
   hero.lastPos.set(x, y);
   hero.vel.set(0, 0);
@@ -16,7 +17,7 @@ function addKeyMapping(window, input, hero, gravity, timer) {
   });
 
   input.addMapping(32, keyState => {
-    if (keyState > 0 && (!hero.isFlying || hero.collisionDirection !== "NONE"))
+    if (keyState > 0 && (!hero.isFlying || hero.collisionDirection !== 'NONE'))
       hero.vel.set(hero.vel.x, -500);
     else hero.vel.set(hero.vel.x, gravity);
   });
@@ -35,7 +36,6 @@ function addKeyMapping(window, input, hero, gravity, timer) {
     timer.start();
   });
 }
-
 module.exports = {
   setInitialPosition: setInitialPosition,
   addKeyMapping: addKeyMapping
