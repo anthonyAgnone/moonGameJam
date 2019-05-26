@@ -6,15 +6,15 @@ const spriteSize = {
   height: 136 * 1.4
 };
 
-function loadBackgroundSprites() {
-  return loadImage("./img/tiles.png").then(image => {
-    const sprites = new SpriteSheet(image, 16, 16);
-    sprites.define("longrect", 0, 0, 16, 16);
-    sprites.define("boi", 0, 1, 16, 16);
-    sprites.define("tallrect", 0, 2, 16, 16);
-    return sprites;
-  });
-}
+// function loadBackgroundSprites() {
+//   return loadImage("./img/tiles.png").then(image => {
+//     const sprites = new SpriteSheet(image, 16, 16);
+//     sprites.define("longrect", 0, 0, 16, 16);
+//     sprites.define("boi", 0, 1, 16, 16);
+//     sprites.define("tallrect", 0, 2, 16, 16);
+//     return sprites;
+//   });
+// }
 
 function loadProjectileSprites() {
   return loadImage("./img/spriteSheetFireball.png").then(image => {
@@ -141,7 +141,9 @@ function loadLevelBlocks() {
     blocks.define("arch2", 9, 1, 100, 100);
     blocks.define("arch3", 10, 1, 100, 100);
     blocks.define("arch4", 9, 2, 100, 100);
-
+    blocks.define("shortWide0", 2, 0, 100, 100);
+    blocks.define("shortWide1", 3, 0, 100, 100);
+    blocks.define("shortWide2", 4, 0, 100, 100);
     return blocks;
   });
 }
@@ -163,7 +165,7 @@ function loadScrolling() {
 }
 
 module.exports = {
-  loadBackgroundSprites: loadBackgroundSprites,
+  // loadBackgroundSprites: loadBackgroundSprites,
   loadHeroSprite: loadHeroSprite,
   loadStatic: loadStatic,
   spriteSize: spriteSize,
