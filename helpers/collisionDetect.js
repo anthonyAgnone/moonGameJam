@@ -1,0 +1,82 @@
+function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
+  const leeway = 5;
+  var collision = false;
+  obs.forEach(obstacles => {
+    if (
+      hero.pos.y + heroSize.height > obstacles[2] + leeway &&
+      hero.pos.y < obstacles[3] - leeway &&
+      hero.pos.x < obstacles[1] - leeway &&
+      hero.pos.x + heroSize.width > obstacles[0] + leeway
+    ) {
+      collision = true;
+      // we have hit a platform, but from what direction
+      if (
+        hero.pos.y + heroSize.height > obstacles[2] + leeway &&
+        hero.pos.y < obstacles[2] + leeway &&
+        hero.pos.x < obstacles[1] - leeway &&
+        hero.pos.x + heroSize.width > obstacles[0] + leeway
+      ) {
+        collisionDirection = "TOP";
+        if (hero.grapple === true) {
+          hero.stopped = true;
+        }
+        hero.pos.y = obstacles[2] - heroSize.height;
+      } else if (
+        hero.pos.y < obstacles[3] - leeway &&
+        hero.pos.y + heroSize.height > obstacles[3] - leeway &&
+        hero.pos.x < obstacles[1] - leeway &&
+        hero.pos.x + heroSize.width > obstacles[0] + leeway
+      ) {
+        collisionDirection = "BOTTOM";
+        if (hero.grapple === true) {
+          hero.stopped = true;
+        }
+        hero.pos.y = obstacles[3];
+        if (hero.pos.x < obstacles[0] - heroSize.width / 2) {
+          hero.pos.x = obstacles[0] - heroSize.width / 2;
+        } else if (
+          hero.pos.x + heroSize.width >
+          obstacles[1] + heroSize.width / 2
+        ) {
+          hero.pos.x = obstacles[1] - heroSize.width / 2;
+        }
+      } else if (
+        hero.pos.y < obstacles[3] - leeway &&
+        hero.pos.y + heroSize.height > obstacles[2] + leeway &&
+        hero.pos.x < obstacles[1] - leeway &&
+        hero.pos.x + heroSize.width > obstacles[1] - leeway
+      ) {
+        collisionDirection = "RIGHT";
+        if (hero.grapple === true) {
+          hero.stopped = true;
+        }
+        hero.pos.x = obstacles[1] - leeway;
+      } else if (
+        hero.pos.y < obstacles[3] - leeway &&
+        hero.pos.y + heroSize.height > obstacles[2] + leeway &&
+        hero.pos.x < obstacles[0] + leeway &&
+        hero.pos.x + heroSize.width > obstacles[0] + leeway
+      ) {
+        collisionDirection = "LEFT";
+        if (hero.grapple === true) {
+          hero.stopped = true;
+        }
+        hero.pos.x = obstacles[0] - heroSize.width + leeway;
+      }
+    }
+  });
+  if (collision === false) {
+    if (hero.grapple === false) {
+      hero.vel.y += gravity;
+    }
+    collisionDirection = "NONE";
+  }
+  if (hero.stopped === true) {
+    hero.vel.set(0, 0);
+  }
+  hero.update(deltaTime);
+}
+
+module.exports = {
+  collisionDetect: collisionDetect
+};
