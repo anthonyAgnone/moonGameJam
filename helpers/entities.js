@@ -8,21 +8,25 @@ function createHero(h, w) {
     let currentFrame;
 
     hero.update = function updateHero(deltaTime) {
-      if (this.pos.x < canvas.width - 200 && this.pos.x > 0) {
-        this.pos.x += this.vel.x * deltaTime * 0.5;
+      if (this.vel.y > 500) {
+        this.vel.y = 500;
       }
+      // if (this.pos.x < canvas.width - 200 && this.pos.x > 0) {
+      //   this.pos.x += this.vel.x * deltaTime * 0.5;
+      // }
 
-      if (this.pos.y < canvas.height - 200 && this.pos.y > 0) {
-        this.pos.y += this.vel.y * deltaTime * 0.5;
-      }
+      // if (this.pos.y < canvas.height - 200 && this.pos.y > 0) {
+      //   this.pos.y += this.vel.y * deltaTime * 0.5;
+      //   console.log(this.pos.y + ' ENT');
+      // }
       if (this.vel.y !== 0) this.isFlying = true;
 
       this.lastPos.x = this.pos.x;
       this.lastPos.y = this.pos.y;
       this.pos.x += this.vel.x * deltaTime;
       this.pos.y += this.vel.y * deltaTime;
-      if (!this.isFlying || this.collisionDirection == 'TOP')
-        this.lastPos.y = this.pos.y;
+      // if (!this.isFlying || this.collisionDirection == 'TOP')
+      //   this.lastPos.y = this.pos.y;
       this.distance = this.vel.x * deltaTime;
       if (this.vel.x == 0) this.startPoint = this.pos.x;
       currentFrame =
@@ -144,6 +148,8 @@ function createHero(h, w) {
         return 'hangRight';
       else if (hero.grapple === true && hero.collisionDirection === 'LEFT')
         return 'hangLeft';
+      else if (hero.collisionDirection === 'LEFT') return 'hangLeft';
+      else if (hero.collisionDirection === 'RIGHT') return 'hangRight';
       else if (hero.grapple === true && hero.facingLeft === true)
         return 'grappleL';
       else if (hero.grapple === true) return 'grapple';
@@ -161,8 +167,18 @@ function createHero(h, w) {
       return 'idle';
     }
     hero.draw = function drawHero(context) {
-      // console.log(routeFrame(this));
-      //console.log(hero.facingLeft);
+      console.log(
+        routeFrame(this) +
+          ' ' +
+          hero.lastPos.x +
+          ' ' +
+          hero.pos.x +
+          ' ' +
+          hero.lastPos.y +
+          ' ' +
+          hero.pos.y
+      );
+      // console.log(hero.vel.x + ' ' + hero.vel.y);
       sprite.draw(routeFrame(this), context, 0, 0);
     };
 

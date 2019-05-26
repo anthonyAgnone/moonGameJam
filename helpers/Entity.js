@@ -19,6 +19,9 @@ class Entity {
     this.shootingLeft = false;
     this.facingLeft = false;
     this.shootFrame = 0;
+    this.runningR = false;
+    this.runningL = false;
+    this.blockVel = new Vec2(0, 0);
   }
 }
 

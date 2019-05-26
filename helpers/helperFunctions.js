@@ -8,14 +8,18 @@ function setInitialPosition(hero, x, y) {
 function addKeyMapping(window, input, hero, gravity, timer) {
   input.addMapping(68, keyState => {
     if (keyState > 0) {
-      hero.vel.set(250, hero.vel.y);
+      hero.vel.set(400, hero.vel.y);
       hero.facingLeft = false;
-    } else hero.vel.set(0, hero.vel.y);
+      hero.runningR = true;
+    } else {
+      hero.vel.set(0, hero.vel.y);
+      hero.runningR = false;
+    }
   });
 
   input.addMapping(65, keyState => {
     if (keyState > 0) {
-      hero.vel.set(-250, hero.vel.y);
+      hero.vel.set(-400, hero.vel.y);
       hero.facingLeft = true;
     } else hero.vel.set(0, hero.vel.y);
   });
@@ -24,10 +28,10 @@ function addKeyMapping(window, input, hero, gravity, timer) {
     if (
       keyState > 0 &&
       (!hero.isFlying ||
-        (hero.collisionDirection !== "BOTTOM" &&
-          hero.collisionDirection !== "NONE"))
+        (hero.collisionDirection !== 'BOTTOM' &&
+          hero.collisionDirection !== 'NONE'))
     )
-      hero.vel.set(hero.vel.x, -600);
+      hero.vel.set(hero.vel.x, -900);
     else hero.vel.set(hero.vel.x, gravity);
   });
 

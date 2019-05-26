@@ -37,6 +37,7 @@ function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
         }
         hero.pos.x = obstacles[0] - heroSize.width + leeway;
         return;
+        d;
       } else if (
         hero.pos.y < obstacles[3] - leeway &&
         hero.pos.y + heroSize.height > obstacles[3] - leeway &&
@@ -47,14 +48,6 @@ function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
         if (hero.grapple === true) {
           hero.stopped = true;
         }
-        console.log([
-          hero.pos.y < obstacles[3] - leeway,
-          hero.pos.y + heroSize.height > obstacles[2] + leeway * 2,
-          hero.pos.x < obstacles[1] - leeway,
-          hero.pos.x < obstacles[1] - leeway * 20,
-          hero.pos.x > obstacles[1] - leeway,
-          collisionDirection
-        ]);
         hero.pos.y = obstacles[3];
         if (hero.pos.x < obstacles[0] - heroSize.width / 2) {
           hero.pos.x = obstacles[0] - heroSize.width / 2;
@@ -66,16 +59,18 @@ function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
         }
         return;
       } else if (
-        hero.pos.y + heroSize.height > obstacles[2] + leeway &&
-        hero.pos.y < obstacles[2] + leeway &&
-        hero.pos.x < obstacles[1] - leeway &&
-        hero.pos.x + heroSize.width > obstacles[0] + leeway
+        hero.pos.y + heroSize.height > obstacles[2] - leeway - 5 &&
+        hero.pos.y < obstacles[2] - leeway - 5 &&
+        hero.pos.x < obstacles[1] + leeway + 5 &&
+        hero.pos.x + heroSize.width > obstacles[0] - leeway - 5
       ) {
         collisionDirection = 'TOP';
         if (hero.grapple === true) {
           hero.stopped = true;
         }
-        hero.pos.y = obstacles[2] - heroSize.height;
+        hero.pos.y = obstacles[2] - heroSize.height - leeway;
+        //hero.blockVel.y=-1*hero.vel.y;
+        console.log(hero.pos.y + ' coll');
         return;
       }
     }
