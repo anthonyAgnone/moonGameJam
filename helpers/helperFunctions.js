@@ -6,12 +6,12 @@ function setInitialPosition(hero, x, y) {
 
 function addKeyMapping(window, input, hero, gravity, timer) {
   input.addMapping(68, keyState => {
-    if (keyState > 0) hero.vel.set(150, hero.vel.y);
+    if (keyState > 0) hero.vel.set(250, hero.vel.y);
     else hero.vel.set(0, hero.vel.y);
   });
 
   input.addMapping(65, keyState => {
-    if (keyState > 0) hero.vel.set(-150, hero.vel.y);
+    if (keyState > 0) hero.vel.set(-250, hero.vel.y);
     else hero.vel.set(0, hero.vel.y);
   });
 
