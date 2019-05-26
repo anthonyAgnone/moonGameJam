@@ -32,6 +32,12 @@ function loadLevelBlocks() {
     blocks.define("gP1", 0, 1, 100, 100);
     blocks.define("gP2", 1, 0, 100, 100);
     blocks.define("gP3", 1, 1, 100, 100);
+    blocks.define("arch0", 9, 0, 100, 100);
+    blocks.define("arch1", 10, 0, 100, 100);
+    blocks.define("arch2", 9, 1, 100, 100);
+    blocks.define("arch3", 10, 1, 100, 100);
+    blocks.define("arch4", 9, 2, 100, 100);
+
     return blocks;
   });
 }
