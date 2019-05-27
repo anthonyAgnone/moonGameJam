@@ -1,21 +1,35 @@
 {
-  "name": "NailGameJam",
+  "name": "nailgamejam",
   "version": "1.0.0",
   "description": "A minimal Electron application",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "repository": "",
   "keywords": [],
   "author": "GitHub",
   "devDependencies": {
-    "electron": "^1.4.1"
+    "electron": "^1.4.1",
+    "electron-builder": "^20.41.0",
+    "electron-installer-dmg": "^2.0.0",
+    "electron-packager": "^13.1.1",
+    "electron-reload": "^1.4.0"
   },
   "dependencies": {
-    "electron-reload": "^1.4.0",
-    "electron-screenshot": "^1.0.3",
     "fs-jetpack": "^0.12.0",
     "jquery": "^3.4.1"
+  },
+  "build": {
+    "appId": "devious",
+    "mac": {
+      "category": "Game Jame Submition"
+    },
+    "win": {
+      "target": "squirrel",
+      "icon": "build/icon.ico"
+    }
   }
 }
