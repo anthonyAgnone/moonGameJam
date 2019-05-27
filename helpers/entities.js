@@ -88,7 +88,7 @@ function createHero(h, w) {
     ];
 
     function routeFrame(hero) {
-      // console.log(hero.collisionDirection);
+      console.log(hero.collisionDirection);
       if (
         hero.lastPos.x !== hero.pos.x &&
         hero.lastPos.y == hero.pos.y &&
@@ -154,8 +154,7 @@ function createHero(h, w) {
       return "idle";
     }
     hero.draw = function drawHero(context) {
-      // console.log(routeFrame(this));
-      //console.log(hero.facingLeft);
+      this.getEntity();
       sprite.draw(routeFrame(this), context, 0, 0);
     };
 
