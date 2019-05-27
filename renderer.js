@@ -62,7 +62,7 @@ Promise.all([
     const gravity = 30;
     const timer = new Timer(1 / 60);
 
-    setInitialPosition(hero, 100, 500);
+    setInitialPosition(hero, 0, 400);
 
     //create Layers
 
@@ -109,7 +109,7 @@ Promise.all([
     timer.update = function update(deltaTime) {
       comp.draw(context, camera);
       camera.setPosition(hero.pos.x * 0.8, hero.pos.y * 0.05);
-
+      if (camera.pos.x < 0) camera.pos.x = 0;
       collisionDetect(hero, obstacles, heroSize, deltaTime, gravity);
       context.strokeStyle = "red";
       context.beginPath();
@@ -188,6 +188,10 @@ Promise.all([
     var projFrames = [];
     window.addEventListener("mousedown", event => {
       const click = getMousePos(canvas, event);
+      if (event.shiftKey) {
+        hero.pos.x = click.x;
+        hero.pos.y = click.y;
+      }
       click.y += camera.pos.y + 30;
       if (event.button === 0) {
         obstacles.forEach(rect => {
@@ -215,8 +219,8 @@ Promise.all([
               hero.grapplePos.x = click.x;
               hero.grapplePos.y = click.y;
               hero.vel.set(
-                hero.grapplePos.x - hero.pos.x,
-                hero.grapplePos.y - hero.pos.y
+                hero.grapplePos.x - hero.pos.x + 200,
+                hero.grapplePos.y - hero.pos.y - 200
               );
             }
           }
