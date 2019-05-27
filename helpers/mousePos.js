@@ -11,6 +11,5 @@ function getMousePos(canvas, evt) {
 }
 
 module.exports = {
-  getMousePos,
-  getMousePos
+  getMousePos: getMousePos
 };

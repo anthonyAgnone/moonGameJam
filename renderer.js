@@ -1,20 +1,20 @@
-'use strict';
+"use strict";
 
 // DEPENDENCIES AND IMPORTS
 
-const Compositor = require('./helpers/Compositor');
-const Timer = require('./helpers/Timer');
-const { loadLevel } = require('./helpers/loaders.js');
-const { createHero, createProj } = require('./helpers/entities');
-const Keyboard = require('./helpers/KeyboardState');
-const Camera = require('./helpers/Camera');
-const { getMousePos } = require('./helpers/mousePos');
+const Compositor = require("./helpers/Compositor");
+const Timer = require("./helpers/Timer");
+const { loadLevel } = require("./helpers/loaders.js");
+const { createHero, createProj } = require("./helpers/entities");
+const Keyboard = require("./helpers/KeyboardState");
+const Camera = require("./helpers/Camera");
+const { getMousePos } = require("./helpers/mousePos");
 const {
   setInitialPosition,
   addKeyMapping
-} = require('./helpers/helperFunctions');
-const { collisionDetect } = require('./helpers/collisionDetect');
-const { collisionDetectProj } = require('./helpers/collisionDetectProj');
+} = require("./helpers/helperFunctions");
+const { collisionDetect } = require("./helpers/collisionDetect");
+const { collisionDetectProj } = require("./helpers/collisionDetectProj");
 
 const {
   loadBackgroundSprites,
@@ -23,11 +23,13 @@ const {
   loadScrolling,
   loadLevelBlocks,
   loadGumSprites,
-  loadMageSprites
-} = require('./helpers/sprites');
+  loadMageSprites,
+  loadGrappleSpritesRight,
+  loadGrappleSpritesLeft
+} = require("./helpers/sprites");
 
-const SpritesJS = require('./helpers/sprites.js');
-const { Vec2 } = require('./helpers/math');
+const SpritesJS = require("./helpers/sprites.js");
+const { Vec2 } = require("./helpers/math");
 const heroSize = SpritesJS.spriteSize;
 
 const {
@@ -36,16 +38,16 @@ const {
   createScrollingLayer,
   createSpriteLayer,
   createCameraLayer
-} = require('./helpers/layers');
+} = require("./helpers/layers");
 
-const canvas = document.getElementById('canvas');
-const context = canvas.getContext('2d');
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
 
-var mysound = new Audio('./snd/Strange_Stuff.mp3');
+var mysound = new Audio("./snd/Strange_Stuff.mp3");
 mysound.loop = true;
 mysound.play();
 
-let currentLevel = '1-1';
+let currentLevel = "1-1";
 
 // PROMISE ALL PERFORMS FOUR FUNCTIONS AND UPON SUCCESS THE DOT THEN HAPPENS WITH THOSE RESULTS
 
@@ -57,7 +59,9 @@ Promise.all([
   loadLevel(currentLevel),
   loadProjectileSprites(),
   loadGumSprites(),
-  loadMageSprites()
+  loadMageSprites(),
+  loadGrappleSpritesRight(),
+  loadGrappleSpritesLeft()
 ]).then(
   ([
     hero,
@@ -67,7 +71,9 @@ Promise.all([
     level,
     projSprites,
     gumSprites,
-    mageSprites
+    mageSprites,
+    grappleSpritesRight,
+    grappleSpritesLeft
   ]) => {
     // initial globals
     const comp = new Compositor();
@@ -76,7 +82,7 @@ Promise.all([
     const gravity = 30;
     const timer = new Timer(1 / 60);
 
-    setInitialPosition(hero, 100, 500);
+    setInitialPosition(hero, 0, 400);
 
     //create Layers
 
@@ -121,8 +127,6 @@ Promise.all([
     var enemType = enemArr[1];
     var enemFrames = enemArr[2];
 
-    // console.log(level);
-
     const staticLayer = createStaticLayer(staticLayerSprite, camera);
     comp.layers.push(staticLayer);
 
@@ -146,6 +150,26 @@ Promise.all([
 
     comp.layers.push(createCameraLayer(camera));
 
+    let grappleReturnRight = 0;
+    let grappleReturnLeft = 0;
+
+    const grappleRightArray = [];
+    const grappleLeftArray = [];
+
+    grappleSpritesRight.names.forEach((name, i) => {
+      for (let j = 0; j < 9; j++) {
+        grappleRightArray.push(name);
+      }
+    });
+
+    grappleSpritesLeft.names.forEach((name, i) => {
+      for (let j = 0; j < 9; j++) {
+        grappleLeftArray.push(name);
+      }
+    });
+
+    let isMouseDown = false;
+
     //timer update functions
 
     var randCount = 0;
@@ -153,19 +177,77 @@ Promise.all([
     timer.update = function update(deltaTime) {
       comp.draw(context, camera);
       camera.setPosition(hero.pos.x * 0.8, hero.pos.y * 0.05);
-
+      if (camera.pos.x < 0) camera.pos.x = 0;
       collisionDetect(hero, obstacles, heroSize, deltaTime, gravity);
-      context.strokeStyle = 'red';
+      context.strokeStyle = "red";
       context.beginPath();
+
+      //fire grappling particle effect
+      console.log(isMouseDown);
+      if (isMouseDown) {
+        let particlePosition = new Vec2(0, 0);
+        if (hero.grapple) {
+          if (hero.facingLeft)
+            particlePosition.set(
+              hero.pos.x - camera.pos.x - 20,
+              hero.pos.y - camera.pos.y - 20
+            );
+          else
+            particlePosition.set(
+              hero.pos.x + heroSize.width / 2 - camera.pos.x + 40,
+              hero.pos.y - camera.pos.y - 40
+            );
+        } else {
+          if (hero.facingLeft)
+            particlePosition.set(
+              hero.pos.x - camera.pos.x - 40,
+              hero.pos.y - camera.pos.y + hero.height / 2
+            );
+          else
+            particlePosition.set(
+              hero.pos.x + heroSize.width / 2 - camera.pos.x + 40,
+              hero.pos.y - camera.pos.y + hero.height / 2
+            );
+        }
+
+        if (!hero.facingLeft) {
+          grappleSpritesRight.draw(
+            grappleRightArray[grappleReturnRight],
+            context,
+            particlePosition.x,
+            particlePosition.y
+          );
+        } else {
+          grappleSpritesLeft.draw(
+            grappleLeftArray[grappleReturnLeft],
+            context,
+            particlePosition.x,
+            particlePosition.y
+          );
+        }
+      }
 
       // TODO make grappling hook ability class add to character
       // initiateGrapple(hero, context);
 
       if (hero.grapple === true) {
-        context.moveTo(
-          hero.pos.x + heroSize.width - camera.pos.x - 20,
-          hero.pos.y + heroSize.height / 2 - camera.pos.y
-        );
+        if (hero.facingLeft) {
+          context.moveTo(
+            hero.pos.x - camera.pos.x + 20,
+            hero.pos.y - camera.pos.y + 20
+          );
+        } else {
+          context.moveTo(
+            hero.pos.x + heroSize.width - camera.pos.x - 10,
+            hero.pos.y - camera.pos.y - 20
+          );
+        }
+
+        if (grappleReturnLeft < grappleLeftArray.length - 2)
+          grappleReturnLeft += 1;
+        if (grappleReturnRight < grappleRightArray.length - 2)
+          grappleReturnRight += 1;
+
         context.lineTo(
           hero.grapplePos.x - camera.pos.x + 10.5,
           hero.grapplePos.y - camera.pos.y
@@ -182,7 +264,7 @@ Promise.all([
       // enemies
       enemies.forEach(function(enem, index) {
         var tmpa = 0;
-        if (enemType[index] === 'moon2GUM') {
+        if (enemType[index] === "moon2GUM") {
           //  tmpa = Math.floor(enemFrames[index] / 11);
 
           randCount += 1;
@@ -211,7 +293,7 @@ Promise.all([
             }
           }
           //  console.log(enem);
-          if (enemType[index] === 'moon2GUM') {
+          if (enemType[index] === "moon2GUM") {
             gumSprites.draw(
               gumSprites.names[enemFrames[index]],
               context,
@@ -219,7 +301,7 @@ Promise.all([
               enem[1] - camera.pos.y - 20
             );
           }
-        } else if (enemType[index] === 'moon2MAGE') {
+        } else if (enemType[index] === "moon2MAGE") {
           randCount += 1;
           if (randCount == 25) {
             randX = Math.random() * (10 - -10) + -10;
@@ -246,7 +328,7 @@ Promise.all([
             }
           }
           //  console.log(enem);
-          if (enemType[index] === 'moon2GUM') {
+          if (enemType[index] === "moon2GUM") {
             gumSprites.draw(
               gumSprites.names[enemFrames[index]],
               context,
@@ -267,6 +349,7 @@ Promise.all([
       if (hero.shooting === true) {
         hero.shootFrame += 1;
       }
+
       var remInd = [];
       var remIndEnemy = [];
       if (projArr.length > 0) {
@@ -338,7 +421,7 @@ Promise.all([
       }
     };
 
-    var collisionDirection = 'NONE';
+    var collisionDirection = "NONE";
 
     // input listeners
     const input = new Keyboard();
@@ -347,10 +430,15 @@ Promise.all([
     var projArr = new Array();
     var projVecArr = new Array();
     var projFrames = [];
-    window.addEventListener('mousedown', event => {
+    window.addEventListener("mousedown", event => {
       const click = getMousePos(canvas, event);
+      if (event.shiftKey) {
+        hero.pos.x = click.x;
+        hero.pos.y = click.y;
+      }
       click.y += camera.pos.y + 30;
       if (event.button === 0) {
+        isMouseDown = true;
         obstacles.forEach(rect => {
           if (
             click.x < rect[1] &&
@@ -376,8 +464,8 @@ Promise.all([
               hero.grapplePos.x = click.x;
               hero.grapplePos.y = click.y;
               hero.vel.set(
-                hero.grapplePos.x - hero.pos.x,
-                hero.grapplePos.y - hero.pos.y
+                hero.grapplePos.x - hero.pos.x + 200,
+                hero.grapplePos.y - hero.pos.y - 200
               );
             }
           }
@@ -410,11 +498,14 @@ Promise.all([
       }
     });
 
-    window.addEventListener('mouseup', () => {
+    window.addEventListener("mouseup", () => {
       if (event.button === 0) {
         hero.grapple = false;
         hero.stopped = false;
-        collisionDirection = 'NONE';
+        collisionDirection = "NONE";
+        grappleReturnLeft = 0;
+        grappleReturnRight = 0;
+        isMouseDown = false;
       }
     });
 

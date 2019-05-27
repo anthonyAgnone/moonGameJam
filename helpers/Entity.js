@@ -1,4 +1,4 @@
-const { Vec2 } = require('./math');
+const { Vec2 } = require("./math");
 
 class Entity {
   constructor(h, w) {
@@ -14,7 +14,7 @@ class Entity {
     this.stopped = false;
     this.pausedPos = new Vec2(0, 0);
     this.pausedVel = new Vec2(0, 0);
-    this.collisionDirection = 'NONE';
+    this.collisionDirection = "NONE";
     this.shooting = false;
     this.shootingLeft = false;
     this.facingLeft = false;

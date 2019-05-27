@@ -1,3 +1,5 @@
+const { getMousePos } = require("./mousePos");
+
 function setInitialPosition(hero, x, y) {
   //console.log(hero);
   hero.pos.set(x, y);
@@ -7,7 +9,6 @@ function setInitialPosition(hero, x, y) {
 
 function addKeyMapping(window, input, hero, gravity, timer) {
   input.addMapping(68, keyState => {
-    //  console.log(keyState);
     if (!hero.grapple) {
       if (keyState > 0) {
         hero.vel.set(400, hero.vel.y);
@@ -29,8 +30,8 @@ function addKeyMapping(window, input, hero, gravity, timer) {
     if (
       keyState > 0 &&
       (!hero.isFlying ||
-        (hero.collisionDirection !== 'BOTTOM' &&
-          hero.collisionDirection !== 'NONE'))
+        (hero.collisionDirection !== "BOTTOM" &&
+          hero.collisionDirection !== "NONE"))
     )
       hero.vel.set(hero.vel.x, -900);
     else hero.vel.set(hero.vel.x, gravity);
