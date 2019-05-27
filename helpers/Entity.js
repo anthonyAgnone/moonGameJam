@@ -20,6 +20,7 @@ class Entity {
     this.facingLeft = false;
     this.shootFrame = 0;
     this.topBound = 0;
+    window.entity = this;
   }
 }
 

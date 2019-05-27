@@ -3,141 +3,287 @@
     {
       "size": "100",
       "tile": "ground",
+      "dmg": "false",
       "ranges": [
         [0, 10, 10, 11],
         [13, 20, 10, 11],
         [29, 37, 8, 9],
         [51, 77, 9, 10],
-        [79, 80, 9, 10],
+        [78.4, 79.4, 9.3, 10.3],
         [81, 82, 10, 11],
-        [81.5, 82.5, 11, 12]
+        [81.5, 82.5, 11, 12],
+        [94, 114, 3, 4],
+        [116, 120, -3, 4],
+        [116, 120, 8, 10],
+        [115, 123, 12, 13],
+        [116, 117, 4, 8],
+        [119, 120, 4, 8]
       ]
     },
     {
       "size": "100",
+      "tile": "rightSpike0",
+      "dmg": "true",
+      "ranges": [[120, 121, -3, 10]]
+    },
+    {
+      "size": "100",
+      "tile": "pungy0",
+      "dmg": "true",
+      "ranges": [[26, 27, 8, 9]]
+    },
+    {
+      "size": "100",
+      "tile": "pungy1",
+      "dmg": "true",
+      "ranges": [[27, 28, 8, 9]]
+    },
+    {
+      "size": "100",
+      "tile": "pungy2",
+      "dmg": "true",
+      "ranges": [[26, 27, 9, 10]]
+    },
+    {
+      "size": "100",
+      "tile": "pungy3",
+      "dmg": "true",
+      "ranges": [[27, 28, 9, 10]]
+    },
+    {
+      "size": "100",
+      "tile": "topSpikes0",
+      "dmg": "true",
+      "ranges": [[94, 108, 2, 3]]
+    },
+    {
+      "size": "100",
+      "tile": "topSpikes1",
+      "dmg": "true",
+      "ranges": [[108, 109, 2, 3]]
+    },
+    {
+      "size": "100",
+      "tile": "topSpikes2",
+      "dmg": "true",
+      "ranges": [[109, 110, 2, 3]]
+    },
+    {
+      "size": "100",
       "tile": "gP0",
+      "dmg": "false",
       "ranges": [[4, 5, 8, 9], [85, 86, 4, 5]]
     },
     {
       "size": "100",
       "tile": "gP2",
+      "dmg": "false",
       "ranges": [[5, 6, 8, 9], [86, 87, 4, 5]]
     },
     {
       "size": "100",
       "tile": "gP1",
+      "dmg": "false",
       "ranges": [[4, 5, 9, 10], [85, 86, 5, 6]]
     },
     {
       "size": "100",
       "tile": "gP3",
+      "dmg": "false",
       "ranges": [[5, 6, 9, 10], [86, 87, 5, 6]]
     },
     {
       "size": "100",
       "tile": "arch0",
+      "dmg": "false",
       "ranges": [[9, 10, 6, 7]]
     },
     {
       "size": "100",
       "tile": "arch1",
+      "dmg": "false",
       "ranges": [[10, 11, 6, 7]]
     },
     {
       "size": "100",
       "tile": "arch2",
+      "dmg": "false",
       "ranges": [[9, 10, 7, 8]]
     },
     {
       "size": "100",
       "tile": "arch3",
+      "dmg": "false",
       "ranges": [[10, 11, 7, 8]]
     },
     {
       "size": "100",
       "tile": "arch4",
+      "dmg": "false",
       "ranges": [[9, 10, 8, 9]]
     },
     {
       "size": "100",
       "tile": "shortWide0",
-      "ranges": [[24, 25, 2, 3], [38, 39, 0, 1], [87, 88, 5, 6]]
+      "dmg": "false",
+      "ranges": [
+        [26, 27, 10, 11],
+        [24, 25, 2, 3],
+        [38, 39, 0, 1],
+        [87, 88, 5, 6],
+        [91.2, 92.2, 3.8, 4.8]
+      ]
     },
     {
       "size": "100",
       "tile": "shortWide1",
-      "ranges": [[25, 26, 2, 3], [39, 40, 0, 1], [88, 89, 5, 6]]
+      "dmg": "false",
+      "ranges": [
+        [27, 28, 10, 11],
+        [25, 26, 2, 3],
+        [39, 40, 0, 1],
+        [88, 89, 5, 6],
+        [92.2, 93.2, 3.81, 4.81]
+      ]
     },
     {
       "size": "100",
       "tile": "shortWide2",
-      "ranges": [[26, 27, 2, 3], [40, 41, 0, 1], [89, 90, 5, 6]]
+      "dmg": "false",
+      "ranges": [
+        [28, 29, 10, 11],
+        [26, 27, 2, 3],
+        [40, 41, 0, 1],
+        [89, 90, 5, 6],
+        [93.2, 94.2, 3.8, 4.8]
+      ]
     },
     {
       "size": "100",
       "tile": "tallSkinny0",
-      "ranges": [[44, 45, 0, 1]]
+      "dmg": "false",
+      "ranges": [[25, 26, 8, 9], [44, 45, 0, 1]]
     },
     {
       "size": "100",
       "tile": "tallSkinny1",
-      "ranges": [[44, 45, 1, 2]]
+      "dmg": "false",
+      "ranges": [[25, 26, 9, 10], [44, 45, 1, 2]]
     },
     {
       "size": "100",
       "tile": "tallSkinny2",
-      "ranges": [[44, 45, 2, 3]]
+      "dmg": "false",
+      "ranges": [[25, 26, 10, 11], [44, 45, 2, 3]]
     },
     {
       "size": "100",
       "tile": "p0",
+      "dmg": "false",
       "ranges": [[0]]
     },
     {
       "size": "100",
       "tile": "p2",
+      "dmg": "false",
       "ranges": [[0]]
     },
     {
       "size": "100",
       "tile": "p3",
+      "dmg": "false",
       "ranges": [[0]]
     },
     {
       "size": "100",
       "tile": "p4",
+      "dmg": "false",
       "ranges": [[48, 49, 0, 1]]
     },
     {
       "size": "100",
       "tile": "p5",
+      "dmg": "false",
       "ranges": [[49, 50, 0, 1]]
     },
     {
       "size": "100",
       "tile": "p6",
+      "dmg": "false",
       "ranges": [[50, 51, 0, 1]]
     },
     {
       "size": "100",
       "tile": "p7",
+      "dmg": "false",
       "ranges": [[51, 52, 0, 1]]
     },
     {
       "size": "100",
       "tile": "p8",
+      "dmg": "false",
       "ranges": [[53, 54, 5, 1]]
+    },
+    {
+      "size": "100",
+      "tile": "cross0",
+      "dmg": "false",
+      "ranges": [[117, 118, 4, 5]]
+    },
+    {
+      "size": "100",
+      "tile": "cross1",
+      "dmg": "false",
+      "ranges": [[118, 119, 4, 5]]
+    },
+    {
+      "size": "100",
+      "tile": "cross2",
+      "dmg": "false",
+      "ranges": [[117, 118, 5, 6]]
+    },
+    {
+      "size": "100",
+      "tile": "cross3",
+      "dmg": "false",
+      "ranges": [[118, 119, 5, 6]]
+    },
+    {
+      "size": "100",
+      "tile": "cross4",
+      "dmg": "false",
+      "ranges": [[117, 118, 6, 7]]
+    },
+    {
+      "size": "100",
+      "tile": "cross5",
+      "dmg": "false",
+      "ranges": [[118, 119, 6, 7]]
+    },
+    {
+      "size": "100",
+      "tile": "cross6",
+      "dmg": "false",
+      "ranges": [[117, 118, 7, 8]]
+    },
+    {
+      "size": "100",
+      "tile": "cross7",
+      "dmg": "false",
+      "ranges": [[118, 119, 7, 8]]
     }
   ],
   "enemies": [
     {
       "size": "100",
       "tile": "moon2GUM",
+      "dmg": "false",
       "ranges": [[17, 9]]
     },
     {
       "size": "100",
       "tile": "moon2MAGE",
+      "dmg": "false",
       "ranges": [[7, 7], [14, 4]]
     }
   ]
