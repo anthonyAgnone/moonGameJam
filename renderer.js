@@ -320,7 +320,7 @@ Promise.all([
                 (hero.pos.y - enem[1]) / 200
               ]);
               mageProjInd.push(index);
-              console.log([enemiesOrig[index][0], enemiesOrig[index][1]]);
+              // console.log([enemiesOrig[index][0], enemiesOrig[index][1]]);
               mageProjOrig.push([enemiesOrig[index][0], enemiesOrig[index][1]]);
               // console.log(mageProjOrig);
               if (hero.pos.x - enem[0] < 0) {
@@ -399,6 +399,30 @@ Promise.all([
             Math.abs(mproj[1] - mageProjOrig[mindex][1]) > 500
           ) {
             remmInd.push(mindex);
+          }
+
+          // hit detect on player
+
+          // console.log(
+          //   (mproj[1] + 43 > hero.pos.y) +
+          //     ' ' +
+          //     (mproj[1] < hero.pos.y) +
+          //     ' ' +
+          //     (mproj[0] < hero.pos.x + heroSize.width) +
+          //     ' ' +
+          //     (mproj[0] + 88 > hero.pos.x)
+          // );
+          if (
+            mproj[1] + 43 + camera.pos.y > hero.pos.y &&
+            mproj[1] < hero.pos.y &&
+            mproj[0] < hero.pos.x + heroSize.width &&
+            mproj[0] + 88 > hero.pos.x
+          ) {
+            //enemFrames[eIndex] = 4;
+            // projFrames[index] = 5;
+            // remIndEnemy.push(eIndex);
+            //remInd.push(index);
+            console.log('HHIITT');
           }
         });
         if (remmInd.length > 0) {
