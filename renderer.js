@@ -48,6 +48,18 @@ const canvas = document.getElementById("canvas");
 const context = canvas.getContext("2d");
 
 var mysound = new Audio("./snd/Strange_Stuff.mp3");
+let bossAttack1 = new Audio("./snd/bossAttack1.mp3");
+let bossAttack2 = new Audio("./snd/bossAttack2.mp3");
+let bossAttack3 = new Audio("./snd/bossAttack3.mp3");
+let bossDeath = new Audio("./snd/bossDeath.mp3");
+let fireball = new Audio("./snd/fireball.mp3");
+let grappleMagic = new Audio("./snd/grappleMagic.mp3");
+let heroDeath = new Audio("./snd/heroDeath.mp3");
+let hitSound = new Audio("./snd/hitSound.mp3");
+let mageDeath = new Audio("./snd/mageDeath.mp3");
+let spiderDeath = new Audio("./snd/spiderDeath.mp3");
+let castleCollapsing = new Audio("./snd/castleCollapsing.mp3");
+
 mysound.loop = true;
 mysound.play();
 
@@ -113,8 +125,8 @@ Promise.all([
       var obsDmg = new Array();
       for (var i = 0; i < level.backgrounds.length; i++) {
         const size = level.backgrounds[i].size;
-        obsDmg.push(level.backgrounds[i].dmg);
         level.backgrounds[i].ranges.forEach(lvl => {
+          obsDmg.push(level.backgrounds[i].dmg);
           obs.push(
             lvl.map(function(tmp) {
               return tmp * size;
@@ -214,11 +226,13 @@ Promise.all([
 
     timer.update = function update(deltaTime) {
       comp.draw(context, camera);
+
       if (hero.pos.y > 1150) window.GAMEOVER = true;
       if (hero.hp < 1) window.GAMEOVER = true;
 
       if (hero.pos.x > 6400) {
         if (window.GAMEOVER) {
+          heroDeath.play();
           hero.isDead = true;
           // setInitialPosition(hero, 6600, 800);
           // window.GAMEOVER = false;
@@ -228,14 +242,26 @@ Promise.all([
             hero.isDead = false;
           }, 1000);
         }
+
+        //death of moon
+        if (moonDeath) {
+          setTimeout(() => {
+            context.font = "430px Arial Bold";
+            context.fillStyle = "red";
+            context.fillText("GAME OVER! You win!");
+          }, 6000);
+        }
+
         camera.pos.x = lerp(camera.pos.x, hero.pos.x, 0.1);
         camera.pos.y = hero.pos.y * 0.3;
         transition = true;
         if (!canvas.classList.contains("shook")) {
+          castleCollapsing.play();
           canvas.classList.add("shook");
         }
       } else {
         if (window.GAMEOVER) {
+          heroDeath.play();
           hero.isDead = true;
           // setInitialPosition(hero, 6600, 800);
           // window.GAMEOVER = false;
@@ -476,9 +502,10 @@ Promise.all([
               moonAttack = true;
 
               attack = Math.floor(Math.round(Math.random() * (2 - 0)));
-              attack = 2;
+              // attack = 2;
               enemFrames[index] = 27 + 3 * moonHelmStatus + attack * 9;
               if (attack == 0) {
+                bossAttack1.play();
                 swh *= 3;
 
                 hurtboxSword[0] -= 300;
@@ -486,11 +513,13 @@ Promise.all([
                 hurtboxSword[2] -= 460;
                 hurtboxSword[3] -= 460 + swh;
               } else if (attack == 1) {
+                bossAttack2.play();
                 swh *= 3;
                 hurtboxSword[0] += 75;
                 hurtboxSword[2] -= 460;
                 hurtboxSword[3] -= 460 + swh;
               } else {
+                bossAttack3.play();
                 hurtboxSword[0] -= 200;
                 hurtboxSword[2] -= 260;
                 hurtboxSword[3] -= 260 + swh;
@@ -752,6 +781,7 @@ Promise.all([
                 } else {
                   moonDeath = true;
                   enemFrames[moonIndex] = 53;
+                  bossDeath.play();
                   setTimeout(() => {
                     enemies.splice(eIndex, 1);
                     enemType.splice(eIndex, 1);
@@ -800,7 +830,7 @@ Promise.all([
             }
           });
 
-          if (proj[0] > hero.pos.x + 1000) {
+          if (proj[0] > hero.pos.x + 650) {
             projArr.splice(index, 1);
             projFrames.splice(index, 1);
             projVecArr.splice(index, 1);
@@ -827,6 +857,7 @@ Promise.all([
       click.y += camera.pos.y + 30;
       if (transition) click.y += camera.pos.y - 25;
       if (event.button === 0) {
+        grappleMagic.play();
         isMouseDown = true;
         obstacles.forEach(rect => {
           if (
@@ -861,6 +892,7 @@ Promise.all([
           }
         });
       } else if (event.button === 2) {
+        // fireball.play();
         if (click.x >= hero.pos.x) {
           hero.facingLeft = false;
           projArr.push([
@@ -899,7 +931,7 @@ Promise.all([
       }
     });
 
-    addKeyMapping(window, input, hero, gravity, timer);
+    addKeyMapping(window, input, hero, gravity, timer, moonDeath);
 
     timer.start();
   }
