@@ -1,0 +1,18 @@
+{
+  "backgrounds": [
+    {
+      "size": "100",
+      "tile": "ground",
+      "dmg": "false",
+      "ranges": [[0, 20, 10, 11]]
+    }
+  ],
+  "enemies": [
+    {
+      "size": "100",
+      "tile": "moon2BOSS",
+      "dmg": "false",
+      "ranges": [[10, 2]]
+    }
+  ]
+}

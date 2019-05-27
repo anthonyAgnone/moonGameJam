@@ -1,8 +1,8 @@
-function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
+function collisionDetect(hero, obs, heroSize, deltaTime, gravity, dmg) {
   const leeway = 5;
   var collision = false;
   var collisionDirection = hero.collisionDirection;
-  obs.forEach(obstacles => {
+  obs.forEach(function(obstacles, index) {
     if (
       hero.pos.y + heroSize.height > obstacles[2] + leeway &&
       hero.pos.y < obstacles[3] - leeway &&
@@ -10,6 +10,10 @@ function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
       hero.pos.x + heroSize.width > obstacles[0] + leeway
     ) {
       collision = true;
+      console.log(dmg[index]);
+      if (dmg[index] === 'true') {
+        hero.hp -= 1;
+      }
       // we have hit a platform, but from what direction
       if (
         hero.pos.y < obstacles[3] - leeway &&
@@ -18,7 +22,7 @@ function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
         hero.pos.x > obstacles[1] - leeway * 4 &&
         hero.pos.x < obstacles[1] - leeway
       ) {
-        collisionDirection = "RIGHT";
+        collisionDirection = 'RIGHT';
         if (hero.grapple === true) {
           hero.stopped = true;
         }
@@ -31,7 +35,7 @@ function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
         hero.pos.x + heroSize.width < obstacles[0] + leeway * 4 &&
         hero.pos.x < obstacles[0] + leeway
       ) {
-        collisionDirection = "LEFT";
+        collisionDirection = 'LEFT';
         if (hero.grapple === true) {
           hero.stopped = true;
         }
@@ -43,7 +47,7 @@ function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
         hero.pos.x < obstacles[1] - leeway &&
         hero.pos.x + heroSize.width > obstacles[0] + leeway
       ) {
-        collisionDirection = "BOTTOM";
+        collisionDirection = 'BOTTOM';
         if (hero.grapple === true) {
           hero.stopped = true;
         }
@@ -63,7 +67,7 @@ function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
         hero.pos.x < obstacles[1] - leeway &&
         hero.pos.x + heroSize.width > obstacles[0] + leeway
       ) {
-        collisionDirection = "TOP";
+        collisionDirection = 'TOP';
         if (hero.grapple === true) {
           hero.stopped = true;
         }
@@ -76,7 +80,7 @@ function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
   if (collision === false) {
     if (hero.grapple === false) {
       hero.vel.y += gravity;
-      collisionDirection = "NONE";
+      collisionDirection = 'NONE';
     }
   }
   if (hero.stopped === true) {
