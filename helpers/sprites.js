@@ -144,6 +144,9 @@ function loadLevelBlocks() {
     blocks.define("shortWide0", 2, 0, 100, 100);
     blocks.define("shortWide1", 3, 0, 100, 100);
     blocks.define("shortWide2", 4, 0, 100, 100);
+    blocks.define("tallSkinny0", 8, 0, 100, 100);
+    blocks.define("tallSkinny1", 8, 1, 100, 100);
+    blocks.define("tallSkinny2", 8, 2, 100, 100);
     return blocks;
   });
 }

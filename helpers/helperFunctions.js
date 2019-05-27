@@ -1,3 +1,5 @@
+const { getMousePos } = require("./mousePos");
+
 function setInitialPosition(hero, x, y) {
   //console.log(hero);
   hero.pos.set(x, y);
