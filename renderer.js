@@ -15,6 +15,7 @@ const {
 } = require("./helpers/helperFunctions");
 const { collisionDetect } = require("./helpers/collisionDetect");
 const { collisionDetectProj } = require("./helpers/collisionDetectProj");
+const { levelTransition } = require("./helpers/levelTransition");
 
 const {
   loadBackgroundSprites,
@@ -29,7 +30,7 @@ const {
 } = require("./helpers/sprites");
 
 const SpritesJS = require("./helpers/sprites.js");
-const { Vec2 } = require("./helpers/math");
+const { Vec2, interpolate, lerp } = require("./helpers/math");
 const heroSize = SpritesJS.spriteSize;
 
 const {
@@ -82,7 +83,7 @@ Promise.all([
     const gravity = 30;
     const timer = new Timer(1 / 60);
 
-    setInitialPosition(hero, 0, 400);
+    setInitialPosition(hero, 5998, 400);
 
     //create Layers
 
@@ -172,18 +173,41 @@ Promise.all([
 
     //timer update functions
 
-    var randCount = 0;
-    var randX = 0;
+    let randCount = 0;
+    let randX = 0;
+
     timer.update = function update(deltaTime) {
       comp.draw(context, camera);
-      camera.setPosition(hero.pos.x * 0.8, hero.pos.y * 0.05);
+
+      // if (hero.pos.x > 6000) {
+      //   if (camera.pos.x < hero.pos.x - 100) {
+      //     camera.pos.x += (hero.pos.x * 0.9 - camera.pos.x + 100) / 20;
+      //   }
+      //   console.log(camera.pos.x + " " + hero.pos.x);
+      // } else {
+      //   //donsole.log(hero.pos.x);
+      //   camera.setPosition(hero.pos.x * 0.8, hero.pos.y * 0.05);
+      // }
+
+      // if (hero.pos.x > 6300) {
+      //   camera.setPosition(6300 + (hero.pos.x - 6250) * 0.8, hero.pos.y * 0.05);
+      // }
+
+      //console.log(camera.pos.x - hero.pos.x);
+      console.log(hero.pos.x);
+      if (hero.pos.x > 6400) {
+        camera.pos.x = lerp(camera.pos.x, hero.pos.x, 0.1);
+      } else {
+        camera.setPosition(hero.pos.x * 0.8, hero.pos.y * 0.05);
+      }
+
       if (camera.pos.x < 0) camera.pos.x = 0;
+
       collisionDetect(hero, obstacles, heroSize, deltaTime, gravity);
       context.strokeStyle = "red";
       context.beginPath();
 
       //fire grappling particle effect
-      console.log(isMouseDown);
       if (isMouseDown) {
         let particlePosition = new Vec2(0, 0);
         if (hero.grapple) {
