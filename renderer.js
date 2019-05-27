@@ -83,7 +83,7 @@ Promise.all([
     const gravity = 30;
     const timer = new Timer(1 / 60);
 
-    setInitialPosition(hero, 5998, 400);
+    setInitialPosition(hero, 8035, 822);
 
     //create Layers
 
@@ -176,27 +176,19 @@ Promise.all([
     let randCount = 0;
     let randX = 0;
 
+    let transition = false;
+    let bossTransition = false;
+
     timer.update = function update(deltaTime) {
       comp.draw(context, camera);
 
-      // if (hero.pos.x > 6000) {
-      //   if (camera.pos.x < hero.pos.x - 100) {
-      //     camera.pos.x += (hero.pos.x * 0.9 - camera.pos.x + 100) / 20;
-      //   }
-      //   console.log(camera.pos.x + " " + hero.pos.x);
-      // } else {
-      //   //donsole.log(hero.pos.x);
-      //   camera.setPosition(hero.pos.x * 0.8, hero.pos.y * 0.05);
-      // }
-
-      // if (hero.pos.x > 6300) {
-      //   camera.setPosition(6300 + (hero.pos.x - 6250) * 0.8, hero.pos.y * 0.05);
-      // }
-
-      //console.log(camera.pos.x - hero.pos.x);
-      console.log(hero.pos.x);
       if (hero.pos.x > 6400) {
         camera.pos.x = lerp(camera.pos.x, hero.pos.x, 0.1);
+        camera.pos.y = hero.pos.y * 0.3;
+        transition = true;
+        if (!canvas.classList.contains("shook")) {
+          canvas.classList.add("shook");
+        }
       } else {
         camera.setPosition(hero.pos.x * 0.8, hero.pos.y * 0.05);
       }
@@ -285,6 +277,7 @@ Promise.all([
           21
         );
       }
+
       // enemies
       enemies.forEach(function(enem, index) {
         var tmpa = 0;
@@ -461,6 +454,7 @@ Promise.all([
         hero.pos.y = click.y;
       }
       click.y += camera.pos.y + 30;
+      if (transition) click.y += camera.pos.y - 25;
       if (event.button === 0) {
         isMouseDown = true;
         obstacles.forEach(rect => {

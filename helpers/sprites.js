@@ -172,6 +172,22 @@ function loadLevelBlocks() {
     blocks.define("tallSkinny0", 8, 0, 100, 100);
     blocks.define("tallSkinny1", 8, 1, 100, 100);
     blocks.define("tallSkinny2", 8, 2, 100, 100);
+    blocks.define("topSpikes0", 5, 2, 100, 100);
+    blocks.define("topSpikes1", 6, 2, 100, 100);
+    blocks.define("topSpikes2", 7, 2, 100, 100);
+    blocks.define("pungy0", 0, 3, 100, 100);
+    blocks.define("pungy1", 1, 3, 100, 100);
+    blocks.define("pungy2", 0, 4, 100, 100);
+    blocks.define("pungy3", 1, 4, 100, 100);
+    blocks.define("cross0", 11, 0, 100, 100);
+    blocks.define("cross1", 12, 0, 100, 100);
+    blocks.define("cross2", 11, 1, 100, 100);
+    blocks.define("cross3", 12, 1, 100, 100);
+    blocks.define("cross4", 11, 2, 100, 100);
+    blocks.define("cross5", 12, 2, 100, 100);
+    blocks.define("cross6", 11, 3, 100, 100);
+    blocks.define("cross7", 12, 3, 100, 100);
+    blocks.define("rightSpike0", 5, 3, 100, 100);
     return blocks;
   });
 }
