@@ -286,6 +286,37 @@ Promise.all([
       const randX = Math.random() * (10 - -10) + -10;
       randmCount += 1;
       enemies.forEach(function(enem, index) {
+        var w = 0;
+        var h = 0;
+        var obstarr = [];
+        if (enemType[index] == 'moon2GUM') {
+          w = 200;
+          h = 150;
+          obstarr = [enem[0], enem[0] + w, enem[1], enem[1] + h];
+        } else if (enemType[index] == 'moon2MAGE') {
+          w = 180;
+          h = 220;
+          obstarr = [enem[0], enem[0] + w, enem[1], enem[1] + h];
+          obstarr[0] += 40;
+          obstarr[2] -= 10;
+        }
+        if (
+          hero.pos.y + heroSize.height - camera.pos.y >
+            obstarr[2] - camera.pos.y &&
+          hero.pos.y - camera.pos.y < obstarr[3] - camera.pos.y &&
+          hero.pos.x - camera.pos.x < obstarr[1] - camera.pos.x &&
+          hero.pos.x + heroSize.width - camera.pos.x > obstarr[0] - camera.pos.x
+        ) {
+          enemFrames[index] = 4;
+          projFrames[index] = 5;
+          hero.hp -= 1;
+          console.log(index);
+          enemies.splice(index, 1);
+          enemType.splice(index, 1);
+          enemFrames.splice(index, 1);
+          enemiesOrig.splice(index, 1);
+          return;
+        }
         var tmpa = 0;
         if (enemType[index] === 'moon2GUM') {
           //  tmpa = Math.floor(enemFrames[index] / 11);
@@ -484,23 +515,6 @@ Promise.all([
             // drawOutline(context, proj[0], proj[1], 65, 40, camera);
 
             if (
-              hero.pos.y + heroSize.height - camera.pos.y >
-                obstarr[2] + leeway - camera.pos.y &&
-              hero.pos.y - camera.pos.y < obstarr[3] - leeway - camera.pos.y &&
-              hero.pos.x - camera.pos.x < obstarr[1] - leeway - camera.pos.x &&
-              hero.pos.x + heroSize.width - camera.pos.x >
-                obstarr[0] + leeway - camera.pos.x
-            ) {
-              enemFrames[eIndex] = 4;
-              projFrames[index] = 5;
-              hero.hp -= 1;
-              console.log(eIndex);
-              enemies.splice(eIndex, 1);
-              enemType.splice(eIndex, 1);
-              enemFrames.splice(eIndex, 1);
-              enemiesOrig.splice(eIndex, 1);
-              return;
-            } else if (
               proj[1] + 40 - camera.pos.y > obstarr[2] - camera.pos.y &&
               proj[1] - camera.pos.y < obstarr[3] - camera.pos.y &&
               proj[0] - camera.pos.x < obstarr[1] - camera.pos.x &&
@@ -561,6 +575,11 @@ Promise.all([
                   Math.pow(click.y - hero.pos.y, 2)
               ) < 700
             ) {
+              hero.pos.y += -20;
+              hero.grapple = true;
+              hero.grapplePos.x = click.x;
+              hero.grapplePos.y = click.y;
+
               if (click.x >= hero.pos.x) {
                 hero.facingLeft = false;
               } else {
@@ -568,13 +587,9 @@ Promise.all([
                   hero.facingLeft = true;
                 }
               }
-              hero.pos.y += -20;
-              hero.grapple = true;
-              hero.grapplePos.x = click.x;
-              hero.grapplePos.y = click.y;
               hero.vel.set(
-                hero.grapplePos.x - hero.pos.x + 200,
-                hero.grapplePos.y - hero.pos.y - 200
+                (hero.grapplePos.x - hero.pos.x) * 1.5,
+                (hero.grapplePos.y - hero.pos.y) * 1.5
               );
             }
           }
