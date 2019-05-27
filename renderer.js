@@ -49,9 +49,9 @@ const context = canvas.getContext("2d");
 
 var mysound = new Audio("./snd/Strange_Stuff.mp3");
 mysound.loop = true;
-//mysound.play();
+mysound.play();
 
-let currentLevel = "test";
+let currentLevel = "1-1";
 
 // PROMISE ALL PERFORMS FOUR FUNCTIONS AND UPON SUCCESS THE DOT THEN HAPPENS WITH THOSE RESULTS
 
