@@ -10,7 +10,7 @@ function drawBackground(background, context, sprites) {
 
 function createBackgroundLayer(backgrounds, sprites, camera) {
   const buffer = document.createElement("canvas");
-  buffer.width = 9000;
+  buffer.width = 22000;
   buffer.height = 2000;
 
   backgrounds.forEach(background => {
