@@ -442,16 +442,23 @@ Promise.all([
             projFrames[index] = 8;
           }
 
-          const leeway = 10;
+          const leeway = 0;
           enemies.forEach(function(obst, eIndex) {
-            const w = 88;
-            const h = 43;
+            var w = 0;
+            var h = 0;
+            if (enemType[eIndex] == 'moon2GUM') {
+              w = 200;
+              h = 150;
+            } else if (enemType[eIndex] == 'moon2MAGE') {
+              w = 100;
+              h = 250;
+            }
             var obstarr = [obst[0], obst[0] + w, obst[1], obst[1] + h];
             if (
-              proj[1] + h > obstarr[2] + leeway - camera.pos.y &&
+              proj[1] + 43 > obstarr[2] + leeway - camera.pos.y &&
               proj[1] < obstarr[3] - leeway - camera.pos.y &&
               proj[0] < obstarr[1] - leeway &&
-              proj[0] + w > obstarr[0] + leeway
+              proj[0] + 88 > obstarr[0] + leeway
             ) {
               enemFrames[eIndex] = 4;
               projFrames[index] = 5;
