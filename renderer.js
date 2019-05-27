@@ -1,20 +1,20 @@
-"use strict";
+'use strict';
 
 // DEPENDENCIES AND IMPORTS
 
-const Compositor = require("./helpers/Compositor");
-const Timer = require("./helpers/Timer");
-const { loadLevel } = require("./helpers/loaders.js");
-const { createHero, createProj } = require("./helpers/entities");
-const Keyboard = require("./helpers/KeyboardState");
-const Camera = require("./helpers/Camera");
-const { getMousePos } = require("./helpers/mousePos");
+const Compositor = require('./helpers/Compositor');
+const Timer = require('./helpers/Timer');
+const { loadLevel } = require('./helpers/loaders.js');
+const { createHero, createProj } = require('./helpers/entities');
+const Keyboard = require('./helpers/KeyboardState');
+const Camera = require('./helpers/Camera');
+const { getMousePos } = require('./helpers/mousePos');
 const {
   setInitialPosition,
   addKeyMapping
-} = require("./helpers/helperFunctions");
-const { collisionDetect } = require("./helpers/collisionDetect");
-const { collisionDetectProj } = require("./helpers/collisionDetectProj");
+} = require('./helpers/helperFunctions');
+const { collisionDetect } = require('./helpers/collisionDetect');
+const { collisionDetectProj } = require('./helpers/collisionDetectProj');
 
 const {
   loadBackgroundSprites,
@@ -25,11 +25,12 @@ const {
   loadGumSprites,
   loadMageSprites,
   loadGrappleSpritesRight,
-  loadGrappleSpritesLeft
-} = require("./helpers/sprites");
+  loadGrappleSpritesLeft,
+  loadMageProjectileSprites
+} = require('./helpers/sprites');
 
-const SpritesJS = require("./helpers/sprites.js");
-const { Vec2 } = require("./helpers/math");
+const SpritesJS = require('./helpers/sprites.js');
+const { Vec2 } = require('./helpers/math');
 const heroSize = SpritesJS.spriteSize;
 
 const {
@@ -38,16 +39,16 @@ const {
   createScrollingLayer,
   createSpriteLayer,
   createCameraLayer
-} = require("./helpers/layers");
+} = require('./helpers/layers');
 
-const canvas = document.getElementById("canvas");
-const context = canvas.getContext("2d");
+const canvas = document.getElementById('canvas');
+const context = canvas.getContext('2d');
 
-var mysound = new Audio("./snd/Strange_Stuff.mp3");
+var mysound = new Audio('./snd/Strange_Stuff.mp3');
 mysound.loop = true;
-mysound.play();
+//mysound.play();
 
-let currentLevel = "1-1";
+let currentLevel = '1-1';
 
 // PROMISE ALL PERFORMS FOUR FUNCTIONS AND UPON SUCCESS THE DOT THEN HAPPENS WITH THOSE RESULTS
 
@@ -61,7 +62,8 @@ Promise.all([
   loadGumSprites(),
   loadMageSprites(),
   loadGrappleSpritesRight(),
-  loadGrappleSpritesLeft()
+  loadGrappleSpritesLeft(),
+  loadMageProjectileSprites()
 ]).then(
   ([
     hero,
@@ -73,7 +75,8 @@ Promise.all([
     gumSprites,
     mageSprites,
     grappleSpritesRight,
-    grappleSpritesLeft
+    grappleSpritesLeft,
+    mageProjSprites
   ]) => {
     // initial globals
     const comp = new Compositor();
@@ -173,17 +176,23 @@ Promise.all([
     //timer update functions
 
     var randCount = 0;
+    var randmCount = 0;
     var randX = 0;
+    var mageProjArr = [];
+    var mageProjVecArr = [];
+    var mageProjFrames = [];
+    var mageProjOrig = [];
+    var mageProjInd = [];
     timer.update = function update(deltaTime) {
       comp.draw(context, camera);
       camera.setPosition(hero.pos.x * 0.8, hero.pos.y * 0.05);
       if (camera.pos.x < 0) camera.pos.x = 0;
       collisionDetect(hero, obstacles, heroSize, deltaTime, gravity);
-      context.strokeStyle = "red";
+      context.strokeStyle = 'red';
       context.beginPath();
 
       //fire grappling particle effect
-      console.log(isMouseDown);
+      //console.log(isMouseDown);
       if (isMouseDown) {
         let particlePosition = new Vec2(0, 0);
         if (hero.grapple) {
@@ -262,9 +271,11 @@ Promise.all([
         );
       }
       // enemies
+      const rando = Math.round(Math.random() * (100 - 100) + 100);
+      randmCount += 1;
       enemies.forEach(function(enem, index) {
         var tmpa = 0;
-        if (enemType[index] === "moon2GUM") {
+        if (enemType[index] === 'moon2GUM') {
           //  tmpa = Math.floor(enemFrames[index] / 11);
 
           randCount += 1;
@@ -293,19 +304,36 @@ Promise.all([
             }
           }
           //  console.log(enem);
-          if (enemType[index] === "moon2GUM") {
-            gumSprites.draw(
-              gumSprites.names[enemFrames[index]],
-              context,
-              enem[0] - camera.pos.x,
-              enem[1] - camera.pos.y - 20
-            );
-          }
-        } else if (enemType[index] === "moon2MAGE") {
-          randCount += 1;
-          if (randCount == 25) {
+          gumSprites.draw(
+            gumSprites.names[enemFrames[index]],
+            context,
+            enem[0] - camera.pos.x,
+            enem[1] - camera.pos.y - 20
+          );
+        } else if (enemType[index] === 'moon2MAGE') {
+          // console.log(index + ' ' + randmCount + ' ' + rando);
+          if (randmCount >= 50) {
+            if (Math.random() > 0.75) {
+              mageProjArr.push([enem[0], enem[1], 50, 50]);
+              mageProjVecArr.push([
+                (hero.pos.x - enem[0]) / 200,
+                (hero.pos.y - enem[1]) / 200
+              ]);
+              mageProjInd.push(index);
+              console.log([enemiesOrig[index][0], enemiesOrig[index][1]]);
+              mageProjOrig.push([enemiesOrig[index][0], enemiesOrig[index][1]]);
+              // console.log(mageProjOrig);
+              if (hero.pos.x - enem[0] < 0) {
+                mageProjFrames.push(8);
+              } else {
+                mageProjFrames.push(0);
+              }
+            }
+
             randX = Math.random() * (10 - -10) + -10;
-            randCount = 0;
+            if (randmCount == 51) {
+              randmCount = 0;
+            }
 
             //console.log(enem[0] + ' ' + enemiesOrig[index][0]);
             if (
@@ -327,15 +355,7 @@ Promise.all([
               enemFrames[index] = 1;
             }
           }
-          //  console.log(enem);
-          if (enemType[index] === "moon2GUM") {
-            gumSprites.draw(
-              gumSprites.names[enemFrames[index]],
-              context,
-              enem[0] - camera.pos.x,
-              enem[1] - camera.pos.y - 20
-            );
-          }
+          //  console
           mageSprites.draw(
             mageSprites.names[enemFrames[index]],
             context,
@@ -348,6 +368,55 @@ Promise.all([
       // projectiles
       if (hero.shooting === true) {
         hero.shootFrame += 1;
+      }
+      // console.log(mageProjArr);
+      var remmInd = [];
+      if (mageProjArr.length > 0) {
+        mageProjArr.forEach(function(mproj, mindex) {
+          // console.log(mproj);
+          // console.log(projSprites.names[mageProjFrames[mindex]]);
+          mageProjSprites.draw(
+            mageProjSprites.names[mageProjFrames[mindex]],
+            context,
+            mproj[0] - camera.pos.x,
+            mproj[1] - camera.pos.y
+          );
+          mproj[0] += mageProjVecArr[mindex][0];
+          mproj[1] += mageProjVecArr[mindex][1];
+          // if (mproj[0] > hero.pos.x + 800) {
+          //   remInd.push(index);
+          // }
+
+          mageProjFrames[mindex] += 1;
+          if (mageProjFrames[mindex] == 5) {
+            mageProjFrames[mindex] = 2;
+          } else if (mageProjFrames[mindex] == 11) {
+            mageProjFrames[mindex] = 8;
+          }
+          //console.log(Math.abs(mproj[1] - mageProjOrig[mindex][1]));
+          if (
+            Math.abs(mproj[0] - mageProjOrig[mindex][0]) > 500 ||
+            Math.abs(mproj[1] - mageProjOrig[mindex][1]) > 500
+          ) {
+            remmInd.push(mindex);
+          }
+        });
+        if (remmInd.length > 0) {
+          //   projArr.splice(remInd);
+          //projArr[remInd] = [];
+          var count = 0;
+          for (var i = 0; i < remmInd.length; i++) {
+            mageProjArr.splice(remmInd[(i -= count)], 1);
+            mageProjFrames.splice(remmInd[(i -= count)], 1);
+            mageProjVecArr.splice(remmInd[(i -= count)], 1);
+            mageProjOrig.splice(remmInd[(i -= count)], 1);
+            // enemies.splice(mageProjInd[remmInd[(i -= count)]], 1);
+            mageProjInd.splice(remmInd[(i -= count)], 1);
+            count += 1;
+          }
+          remmInd = [];
+        }
+        // console.log(mageProjArr + ' ' + mageProjOrig);
       }
 
       var remInd = [];
@@ -413,15 +482,16 @@ Promise.all([
               enemies.splice(remIndEnemy[(i -= count)], 1);
               enemType.splice(remIndEnemy[(i -= count)], 1);
               enemFrames.splice(remIndEnemy[(i -= count)], 1);
+              enemiesOrig.splice(remIndEnemy[(i -= count)], 1);
               count += 1;
             }
-          }, 100);
+          }, 75);
         }
         remInd = [];
       }
     };
 
-    var collisionDirection = "NONE";
+    var collisionDirection = 'NONE';
 
     // input listeners
     const input = new Keyboard();
@@ -430,7 +500,7 @@ Promise.all([
     var projArr = new Array();
     var projVecArr = new Array();
     var projFrames = [];
-    window.addEventListener("mousedown", event => {
+    window.addEventListener('mousedown', event => {
       const click = getMousePos(canvas, event);
       if (event.shiftKey) {
         hero.pos.x = click.x;
@@ -498,11 +568,11 @@ Promise.all([
       }
     });
 
-    window.addEventListener("mouseup", () => {
+    window.addEventListener('mouseup', () => {
       if (event.button === 0) {
         hero.grapple = false;
         hero.stopped = false;
-        collisionDirection = "NONE";
+        collisionDirection = 'NONE';
         grappleReturnLeft = 0;
         grappleReturnRight = 0;
         isMouseDown = false;
