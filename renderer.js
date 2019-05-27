@@ -14,6 +14,7 @@ const {
   addKeyMapping
 } = require('./helpers/helperFunctions');
 const { collisionDetect } = require('./helpers/collisionDetect');
+const { drawOutline } = require('./helpers/drawOutline');
 const { collisionDetectProj } = require('./helpers/collisionDetectProj');
 
 const {
@@ -188,9 +189,19 @@ Promise.all([
       camera.setPosition(hero.pos.x * 0.8, hero.pos.y * 0.05);
       if (camera.pos.x < 0) camera.pos.x = 0;
       collisionDetect(hero, obstacles, heroSize, deltaTime, gravity);
-      context.strokeStyle = 'red';
       context.beginPath();
+      drawOutline(
+        context,
+        hero.pos.x,
+        hero.pos.y,
+        heroSize.width,
+        heroSize.height,
+        camera
+      );
 
+      context.font = '30px Arial Bold';
+      context.fillStyle = 'red';
+      context.fillText('Life Remaining : ' + hero.hp, 10, 30);
       //fire grappling particle effect
       //console.log(isMouseDown);
       if (isMouseDown) {
@@ -272,6 +283,7 @@ Promise.all([
       }
       // enemies
       const rando = Math.round(Math.random() * (100 - 100) + 100);
+      const randX = Math.random() * (10 - -10) + -10;
       randmCount += 1;
       enemies.forEach(function(enem, index) {
         var tmpa = 0;
@@ -280,7 +292,6 @@ Promise.all([
 
           randCount += 1;
           if (randCount == 25) {
-            randX = Math.random() * (10 - -10) + -10;
             randCount = 0;
 
             //console.log(enem[0] + ' ' + enemiesOrig[index][0]);
@@ -312,17 +323,20 @@ Promise.all([
           );
         } else if (enemType[index] === 'moon2MAGE') {
           // console.log(index + ' ' + randmCount + ' ' + rando);
-          if (randmCount >= 50) {
-            if (Math.random() > 0.75) {
+          if (
+            randmCount >= 100 &&
+            enemies[index][0] - hero.pos.x < 500 &&
+            enemies[index][1] - hero.pos.y < 500
+          ) {
+            if (rando > 0.95) {
               mageProjArr.push([enem[0], enem[1], 50, 50]);
+
               mageProjVecArr.push([
                 (hero.pos.x - enem[0]) / 200,
                 (hero.pos.y - enem[1]) / 200
               ]);
               mageProjInd.push(index);
-              // console.log([enemiesOrig[index][0], enemiesOrig[index][1]]);
               mageProjOrig.push([enemiesOrig[index][0], enemiesOrig[index][1]]);
-              // console.log(mageProjOrig);
               if (hero.pos.x - enem[0] < 0) {
                 mageProjFrames.push(8);
               } else {
@@ -330,8 +344,7 @@ Promise.all([
               }
             }
 
-            randX = Math.random() * (10 - -10) + -10;
-            if (randmCount == 51) {
+            if (randmCount >= 101) {
               randmCount = 0;
             }
 
@@ -381,11 +394,9 @@ Promise.all([
             mproj[0] - camera.pos.x,
             mproj[1] - camera.pos.y
           );
+          drawOutline(context, mproj[0], mproj[1], 88, 43, camera);
           mproj[0] += mageProjVecArr[mindex][0];
           mproj[1] += mageProjVecArr[mindex][1];
-          // if (mproj[0] > hero.pos.x + 800) {
-          //   remInd.push(index);
-          // }
 
           mageProjFrames[mindex] += 1;
           if (mageProjFrames[mindex] == 5) {
@@ -395,52 +406,39 @@ Promise.all([
           }
           //console.log(Math.abs(mproj[1] - mageProjOrig[mindex][1]));
           if (
-            Math.abs(mproj[0] - mageProjOrig[mindex][0]) > 500 ||
-            Math.abs(mproj[1] - mageProjOrig[mindex][1]) > 500
+            Math.abs(mproj[0] - mageProjOrig[mindex][0]) > 400 ||
+            Math.abs(mproj[1] - mageProjOrig[mindex][1]) > 400
           ) {
-            remmInd.push(mindex);
-          }
-
-          // hit detect on player
-
-          // console.log(
-          //   (mproj[1] + 43 > hero.pos.y) +
-          //     ' ' +
-          //     (mproj[1] < hero.pos.y) +
-          //     ' ' +
-          //     (mproj[0] < hero.pos.x + heroSize.width) +
-          //     ' ' +
-          //     (mproj[0] + 88 > hero.pos.x)
-          // );
-          if (
-            mproj[1] + 43 + camera.pos.y > hero.pos.y &&
-            mproj[1] < hero.pos.y &&
-            mproj[0] < hero.pos.x + heroSize.width &&
-            mproj[0] + 88 > hero.pos.x
-          ) {
-            //enemFrames[eIndex] = 4;
-            // projFrames[index] = 5;
-            // remIndEnemy.push(eIndex);
-            //remInd.push(index);
-            console.log('HHIITT');
+            mageProjArr.splice(mindex, 1);
+            mageProjFrames.splice(mindex, 1);
+            mageProjVecArr.splice(mindex, 1);
+            mageProjOrig.splice(mindex, 1);
+            // enemies.splice(mageProjInd[remmInd[(i -= count)]], 1);
+            mageProjInd.splice(mindex, 1);
+          } else {
+            if (
+              hero.pos.y + heroSize.height - camera.pos.y >
+                mproj[1] - camera.pos.y &&
+              hero.pos.y - camera.pos.y < mproj[1] + 43 - camera.pos.y &&
+              hero.pos.x - camera.pos.x < mproj[0] + 88 - camera.pos.x &&
+              hero.pos.x + heroSize.width - camera.pos.x >
+                mproj[0] - camera.pos.x
+            ) {
+              //enemFrames[eIndex] = 4;
+              // projFrames[index] = 5;
+              // remIndEnemy.push(eIndex);
+              //remInd.push(index);
+              hero.hp -= 1;
+              // remmInd.push(mindex);
+              mageProjArr.splice(mindex, 1);
+              mageProjFrames.splice(mindex, 1);
+              mageProjVecArr.splice(mindex, 1);
+              mageProjOrig.splice(mindex, 1);
+              // enemies.splice(mageProjInd[remmInd[(i -= count)]], 1);
+              mageProjInd.splice(mindex, 1);
+            }
           }
         });
-        if (remmInd.length > 0) {
-          //   projArr.splice(remInd);
-          //projArr[remInd] = [];
-          var count = 0;
-          for (var i = 0; i < remmInd.length; i++) {
-            mageProjArr.splice(remmInd[(i -= count)], 1);
-            mageProjFrames.splice(remmInd[(i -= count)], 1);
-            mageProjVecArr.splice(remmInd[(i -= count)], 1);
-            mageProjOrig.splice(remmInd[(i -= count)], 1);
-            // enemies.splice(mageProjInd[remmInd[(i -= count)]], 1);
-            mageProjInd.splice(remmInd[(i -= count)], 1);
-            count += 1;
-          }
-          remmInd = [];
-        }
-        // console.log(mageProjArr + ' ' + mageProjOrig);
       }
 
       var remInd = [];
@@ -470,55 +468,65 @@ Promise.all([
           enemies.forEach(function(obst, eIndex) {
             var w = 0;
             var h = 0;
+            var obstarr = [];
             if (enemType[eIndex] == 'moon2GUM') {
               w = 200;
               h = 150;
+              obstarr = [obst[0], obst[0] + w, obst[1], obst[1] + h];
             } else if (enemType[eIndex] == 'moon2MAGE') {
-              w = 100;
-              h = 250;
+              w = 180;
+              h = 220;
+              obstarr = [obst[0], obst[0] + w, obst[1], obst[1] + h];
+              obstarr[0] += 40;
+              obstarr[2] -= 10;
             }
-            var obstarr = [obst[0], obst[0] + w, obst[1], obst[1] + h];
+            // drawOutline(context, obstarr[0], obstarr[2], w, h, camera);
+            // drawOutline(context, proj[0], proj[1], 65, 40, camera);
+
             if (
-              proj[1] + 43 > obstarr[2] + leeway - camera.pos.y &&
-              proj[1] < obstarr[3] - leeway - camera.pos.y &&
-              proj[0] < obstarr[1] - leeway &&
-              proj[0] + 88 > obstarr[0] + leeway
+              hero.pos.y + heroSize.height - camera.pos.y >
+                obstarr[2] + leeway - camera.pos.y &&
+              hero.pos.y - camera.pos.y < obstarr[3] - leeway - camera.pos.y &&
+              hero.pos.x - camera.pos.x < obstarr[1] - leeway - camera.pos.x &&
+              hero.pos.x + heroSize.width - camera.pos.x >
+                obstarr[0] + leeway - camera.pos.x
             ) {
               enemFrames[eIndex] = 4;
               projFrames[index] = 5;
-              remIndEnemy.push(eIndex);
-              remInd.push(index);
+              hero.hp -= 1;
+              console.log(eIndex);
+              enemies.splice(eIndex, 1);
+              enemType.splice(eIndex, 1);
+              enemFrames.splice(eIndex, 1);
+              enemiesOrig.splice(eIndex, 1);
+              return;
+            } else if (
+              proj[1] + 40 - camera.pos.y > obstarr[2] - camera.pos.y &&
+              proj[1] - camera.pos.y < obstarr[3] - camera.pos.y &&
+              proj[0] - camera.pos.x < obstarr[1] - camera.pos.x &&
+              proj[0] + 65 - camera.pos.x > obstarr[0] - camera.pos.x
+
+              // hero.pos.y + heroSize.height > obstacles[2] + leeway &&
+              // hero.pos.y < obstacles[3] - leeway &&
+              // hero.pos.x < obstacles[1] - leeway &&
+              // hero.pos.x + heroSize.width > obstacles[0] + leeway
+            ) {
+              enemFrames[eIndex] = 4;
+              projFrames[index] = 5;
+
+              projArr.splice(index, 1);
+              projFrames.splice(index, 1);
+              projVecArr.splice(index, 1);
+
+              setTimeout(() => {
+                enemies.splice(eIndex, 1);
+                enemType.splice(eIndex, 1);
+                enemFrames.splice(eIndex, 1);
+                enemiesOrig.splice(eIndex, 1);
+              }, 75);
             }
           });
         });
-
-        if (remInd.length > 0) {
-          //   projArr.splice(remInd);
-          //projArr[remInd] = [];
-          var count = 0;
-          for (var i = 0; i < remInd.length; i++) {
-            projArr.splice(remInd[(i -= count)], 1);
-            projFrames.splice(remInd[(i -= count)], 1);
-            projVecArr.splice(remInd[(i -= count)], 1);
-            count += 1;
-          }
-        }
-        if (remIndEnemy.length > 0) {
-          //   projArr.splice(remInd);
-          //projArr[remInd] = [];
-
-          setTimeout(() => {
-            var count = 0;
-            for (var i = 0; i < remIndEnemy.length; i++) {
-              enemies.splice(remIndEnemy[(i -= count)], 1);
-              enemType.splice(remIndEnemy[(i -= count)], 1);
-              enemFrames.splice(remIndEnemy[(i -= count)], 1);
-              enemiesOrig.splice(remIndEnemy[(i -= count)], 1);
-              count += 1;
-            }
-          }, 75);
-        }
-        remInd = [];
       }
     };
 
