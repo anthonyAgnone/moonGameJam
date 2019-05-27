@@ -1,5 +1,5 @@
-const Entity = require("./Entity.js");
-const { loadHeroSprite } = require("./sprites.js");
+const Entity = require('./Entity.js');
+const { loadHeroSprite } = require('./sprites.js');
 
 function createHero(h, w) {
   return loadHeroSprite().then(sprite => {
@@ -14,8 +14,9 @@ function createHero(h, w) {
       this.lastPos.y = this.pos.y;
       this.pos.x += this.vel.x * deltaTime;
       this.pos.y += this.vel.y * deltaTime;
-      if (!this.isFlying || this.collisionDirection == "TOP")
+      if (!this.isFlying || this.collisionDirection == 'TOP') {
         this.lastPos.y = this.pos.y;
+      }
       this.distance = this.vel.x * deltaTime;
       if (this.vel.x == 0) this.startPoint = this.pos.x;
       currentFrame =
@@ -29,62 +30,62 @@ function createHero(h, w) {
     };
 
     const frames = [
-      "run1",
-      "run2",
-      "run3",
-      "run4",
-      "run5",
-      "run6",
-      "run7",
-      "run8",
-      "run9",
-      "run10",
-      "run11",
-      "run12"
+      'run1',
+      'run2',
+      'run3',
+      'run4',
+      'run5',
+      'run6',
+      'run7',
+      'run8',
+      'run9',
+      'run10',
+      'run11',
+      'run12'
     ];
     const framesL = [
-      "run1L",
-      "run2L",
-      "run3L",
-      "run4L",
-      "run5L",
-      "run6L",
-      "run7L",
-      "run8L",
-      "run9L",
-      "run10L",
-      "run11L",
-      "run12L"
+      'run1L',
+      'run2L',
+      'run3L',
+      'run4L',
+      'run5L',
+      'run6L',
+      'run7L',
+      'run8L',
+      'run9L',
+      'run10L',
+      'run11L',
+      'run12L'
     ];
 
     const framesSh = [
-      "run1sh",
-      "run2sh",
-      "run3sh",
-      "run4sh",
-      "run5sh",
-      "run6sh",
-      "run7sh",
-      "run8sh",
-      "run9sh",
-      "run10sh",
-      "run11sh",
-      "run12sh"
+      'run1sh',
+      'run2sh',
+      'run3sh',
+      'run4sh',
+      'run5sh',
+      'run6sh',
+      'run7sh',
+      'run8sh',
+      'run9sh',
+      'run10sh',
+      'run11sh',
+      'run12sh'
     ];
 
     const framesShL = [
-      "run1shL",
-      "run2shL",
-      "run3shL",
-      "run4shL",
-      "run5shL",
-      "run6shL",
-      "run7shL",
-      "run8shL",
-      "run9shL",
-      "run10shL",
-      "run11shL",
-      "run12shL"
+      'run1shL',
+      'run2shL',
+      'run3shL',
+      'run4shL',
+      'run5shL',
+      'run6shL',
+      'run7shL',
+      'run8shL',
+      'run9shL',
+      'run10shL',
+      'run11shL',
+      'run12shL'
     ];
 
     function routeFrame(hero) {
@@ -111,46 +112,48 @@ function createHero(h, w) {
         return frames[currentFrame];
       else if (
         hero.shooting === true &&
-        hero.collisionDirection === "BOTTOM" &&
+        hero.collisionDirection === 'BOTTOM' &&
         hero.shootingLeft === true
       )
-        return "hangBottomShootLeft";
-      else if (hero.shooting === true && hero.collisionDirection === "BOTTOM")
-        return "hangBottomShoot";
-      else if (hero.shooting === true && hero.collisionDirection === "RIGHT")
-        return "hangRightShoot";
-      else if (hero.shooting === true && hero.collisionDirection === "LEFT")
-        return "hangLeftShoot";
+        return 'hangBottomShootLeft';
+      else if (hero.shooting === true && hero.collisionDirection === 'BOTTOM')
+        return 'hangBottomShoot';
+      else if (hero.shooting === true && hero.collisionDirection === 'RIGHT')
+        return 'hangRightShoot';
+      else if (hero.shooting === true && hero.collisionDirection === 'LEFT')
+        return 'hangLeftShoot';
       else if (hero.shooting === true && hero.shootingLeft === true)
-        return "shootLeft";
-      else if (hero.shooting === true) return "shoot";
+        return 'shootLeft';
+      else if (hero.shooting === true) return 'shoot';
       else if (
         hero.grapple === true &&
-        hero.collisionDirection === "BOTTOM" &&
+        hero.collisionDirection === 'BOTTOM' &&
         hero.facingLeft === true
       )
-        return "hangBottomL";
-      else if (hero.grapple === true && hero.collisionDirection === "BOTTOM")
-        return "hangBottom";
-      else if (hero.grapple === true && hero.collisionDirection === "RIGHT")
-        return "hangRight";
-      else if (hero.grapple === true && hero.collisionDirection === "LEFT")
-        return "hangLeft";
+        return 'hangBottomL';
+      else if (hero.grapple === true && hero.collisionDirection === 'BOTTOM')
+        return 'hangBottom';
+      else if (hero.grapple === true && hero.collisionDirection === 'RIGHT')
+        return 'hangRight';
+      else if (hero.collisionDirection === 'RIGHT') return 'hangRight';
+      else if (hero.grapple === true && hero.collisionDirection === 'LEFT')
+        return 'hangLeft';
+      else if (hero.collisionDirection === 'LEFT') return 'hangLeft';
       else if (hero.grapple === true && hero.facingLeft === true)
-        return "grappleL";
-      else if (hero.grapple === true) return "grapple";
-      else if (hero.facingLeft === true && hero.vel.x < 0) return "jump1L";
-      else if (hero.vel.y < 0) return "jump1";
+        return 'grappleL';
+      else if (hero.grapple === true) return 'grapple';
+      else if (hero.facingLeft === true && hero.vel.x < 0) return 'jump1L';
+      else if (hero.vel.y < 0) return 'jump1';
       else if (
         hero.vel.y > 0 &&
-        hero.collisionDirection == "NONE" &&
+        hero.collisionDirection == 'NONE' &&
         hero.facingLeft == true
       )
-        return "fall1L";
-      else if (hero.vel.y > 0 && hero.collisionDirection == "NONE")
-        return "fall1";
-      else if (hero.facingLeft === true) return "idleL";
-      return "idle";
+        return 'fall1L';
+      else if (hero.vel.y > 0 && hero.collisionDirection == 'NONE')
+        return 'fall1';
+      else if (hero.facingLeft === true) return 'idleL';
+      return 'idle';
     }
     hero.draw = function drawHero(context) {
       sprite.draw(routeFrame(this), context, 0, 0);

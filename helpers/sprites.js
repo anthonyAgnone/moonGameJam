@@ -16,6 +16,31 @@ const spriteSize = {
 //   });
 // }
 
+function loadGumSprites() {
+  return loadImage("./img/spriteSheetSpider.png").then(image => {
+    const sprites = new SpriteSheet(image, 200, 150);
+    sprites.define("idle", 0, 0, 200, 150);
+    sprites.define("crouch", 2, 0, 200, 150);
+    sprites.define("idleL", 0, 1, 200, 150);
+    sprites.define("crouchL", 2, 1, 200, 150);
+    sprites.define("hurt", 1, 1, 200, 150);
+    sprites.define("hurtL", 1, 1, 200, 150);
+    return sprites;
+  });
+}
+
+function loadMageSprites() {
+  return loadImage("./img/spriteSheetMage.png").then(image => {
+    const sprites = new SpriteSheet(image, 250, 250);
+    sprites.define("idle", 0, 1, 250, 250);
+    sprites.define("idleL", 0, 0, 250, 250);
+    sprites.define("attack", 2, 1, 250, 250);
+    sprites.define("attackL", 2, 0, 250, 250);
+    sprites.define("hurt", 1, 1, 250, 250);
+    sprites.define("hurtL", 1, 1, 250, 250);
+    return sprites;
+  });
+}
 function loadProjectileSprites() {
   return loadImage("./img/spriteSheetFireball.png").then(image => {
     const sprites = new SpriteSheet(image, 88, 43);
@@ -195,6 +220,8 @@ module.exports = {
   loadProjectileSprites: loadProjectileSprites,
   loadLevelBlocks: loadLevelBlocks,
   loadScrolling: loadScrolling,
+  loadGumSprites: loadGumSprites,
+  loadMageSprites: loadMageSprites,
   loadGrappleSpritesRight: loadGrappleSpritesRight,
   loadGrappleSpritesLeft: loadGrappleSpritesLeft
 };

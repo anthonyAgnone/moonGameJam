@@ -47,7 +47,7 @@ function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
         if (hero.grapple === true) {
           hero.stopped = true;
         }
-        hero.pos.y = obstacles[3];
+        hero.pos.y = obstacles[3] + leeway;
         if (hero.pos.x < obstacles[0] - heroSize.width / 2) {
           hero.pos.x = obstacles[0] - heroSize.width / 2;
         } else if (
@@ -68,6 +68,7 @@ function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
           hero.stopped = true;
         }
         hero.pos.y = obstacles[2] - heroSize.height - leeway;
+        // hero.topBound = obstacles[2] - heroSize.height - leeway;
         return;
       }
     }

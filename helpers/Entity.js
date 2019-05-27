@@ -19,6 +19,7 @@ class Entity {
     this.shootingLeft = false;
     this.facingLeft = false;
     this.shootFrame = 0;
+    this.topBound = 0;
   }
 }
 
