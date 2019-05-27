@@ -19,12 +19,6 @@ class Entity {
     this.shootingLeft = false;
     this.facingLeft = false;
     this.shootFrame = 0;
-
-    this.getEntity = this.getEntity.bind(this);
-  }
-
-  getEntity() {
-    console.log(this);
   }
 }
 

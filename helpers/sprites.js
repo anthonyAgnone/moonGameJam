@@ -167,6 +167,26 @@ function loadScrolling() {
   });
 }
 
+function loadGrappleSpritesRight() {
+  return loadImage("./img/spriteSheetGrapple.png").then(image => {
+    const sprite = new SpriteSheet(image, 66, 69);
+    sprite.define("frame0", 0, 0, 66, 69);
+    sprite.define("frame1", 1, 0, 66, 69);
+    sprite.define("frame2", 2, 0, 66, 69);
+    return sprite;
+  });
+}
+
+function loadGrappleSpritesLeft() {
+  return loadImage("./img/spriteSheetGrapple.png").then(image => {
+    const sprite = new SpriteSheet(image, 66, 69);
+    sprite.define("frame0", 0, 1, 66, 69);
+    sprite.define("frame1", 1, 1, 66, 69);
+    sprite.define("frame2", 2, 1, 66, 69);
+    return sprite;
+  });
+}
+
 module.exports = {
   // loadBackgroundSprites: loadBackgroundSprites,
   loadHeroSprite: loadHeroSprite,
@@ -174,5 +194,7 @@ module.exports = {
   spriteSize: spriteSize,
   loadProjectileSprites: loadProjectileSprites,
   loadLevelBlocks: loadLevelBlocks,
-  loadScrolling: loadScrolling
+  loadScrolling: loadScrolling,
+  loadGrappleSpritesRight: loadGrappleSpritesRight,
+  loadGrappleSpritesLeft: loadGrappleSpritesLeft
 };
