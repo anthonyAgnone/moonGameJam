@@ -81,6 +81,6 @@
       </dict>
     </dict>
     <key>AsarIntegrity</key>
-    <string>{"checksums":{"app.asar":"toW7oT+5QoZRORHNyvDbBH+Xty+VV7V198xlG6NRre51GvYVRHpOFB6N8Evuan797xjBrPq/MGuGop0rDPam4w==","electron.asar":"2xJVGheymHDHkqltz2aSz0SGMVK1QAuY1lx6zF6websTqQpOI70idX56my1H9vqHUReE2y7wB2/5vFy8dVm5kw=="}}</string>
+    <string>{"checksums":{"app.asar":"AmrKMw55j7H03i8OI/5tpQLDQIG5d5CzSCMSgYgWtS4tTiKnmE3ZNSarAUc6by8y4UaciyZ7Te2mtsgT4N97tg==","electron.asar":"2xJVGheymHDHkqltz2aSz0SGMVK1QAuY1lx6zF6websTqQpOI70idX56my1H9vqHUReE2y7wB2/5vFy8dVm5kw=="}}</string>
   </dict>
 </plist>

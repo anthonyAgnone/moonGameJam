@@ -5,6 +5,6 @@ appId: devious
 mac:
   category: Game Jame Submition
 win:
-  target: squirrel
+  target: portable
   icon: build/icon.ico
 electronVersion: 1.8.8
