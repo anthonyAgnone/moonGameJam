@@ -118,10 +118,18 @@ Promise.all([
       // initiateGrapple(hero, context);
 
       if (hero.grapple === true) {
-        context.moveTo(
-          hero.pos.x + heroSize.width - camera.pos.x - 20,
-          hero.pos.y + heroSize.height / 2 - camera.pos.y
-        );
+        if (hero.facingLeft) {
+          context.moveTo(
+            hero.pos.x - camera.pos.x + 20,
+            hero.pos.y - camera.pos.y + 20
+          );
+        } else {
+          context.moveTo(
+            hero.pos.x + heroSize.width - camera.pos.x - 20,
+            hero.pos.y + -camera.pos.y + 20
+          );
+        }
+
         context.lineTo(
           hero.grapplePos.x - camera.pos.x + 10.5,
           hero.grapplePos.y - camera.pos.y
