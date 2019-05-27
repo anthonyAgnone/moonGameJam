@@ -65,5 +65,17 @@
       "tile": "shortWide2",
       "ranges": [[26, 27, 2, 3], [40, 41, 0, 1]]
     }
+  ],
+  "enemies": [
+    {
+      "size": "100",
+      "tile": "moon2GUM",
+      "ranges": [[17, 9]]
+    },
+    {
+      "size": "100",
+      "tile": "moon2MAGE",
+      "ranges": [[7, 7], [14, 4]]
+    }
   ]
 }

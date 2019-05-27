@@ -18,7 +18,7 @@ function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
         hero.pos.x > obstacles[1] - leeway * 4 &&
         hero.pos.x < obstacles[1] - leeway
       ) {
-        collisionDirection = "RIGHT";
+        collisionDirection = 'RIGHT';
         if (hero.grapple === true) {
           hero.stopped = true;
         }
@@ -31,7 +31,7 @@ function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
         hero.pos.x + heroSize.width < obstacles[0] + leeway * 4 &&
         hero.pos.x < obstacles[0] + leeway
       ) {
-        collisionDirection = "LEFT";
+        collisionDirection = 'LEFT';
         if (hero.grapple === true) {
           hero.stopped = true;
         }
@@ -43,19 +43,11 @@ function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
         hero.pos.x < obstacles[1] - leeway &&
         hero.pos.x + heroSize.width > obstacles[0] + leeway
       ) {
-        collisionDirection = "BOTTOM";
+        collisionDirection = 'BOTTOM';
         if (hero.grapple === true) {
           hero.stopped = true;
         }
-        console.log([
-          hero.pos.y < obstacles[3] - leeway,
-          hero.pos.y + heroSize.height > obstacles[2] + leeway * 2,
-          hero.pos.x < obstacles[1] - leeway,
-          hero.pos.x < obstacles[1] - leeway * 20,
-          hero.pos.x > obstacles[1] - leeway,
-          collisionDirection
-        ]);
-        hero.pos.y = obstacles[3];
+        hero.pos.y = obstacles[3] + leeway;
         if (hero.pos.x < obstacles[0] - heroSize.width / 2) {
           hero.pos.x = obstacles[0] - heroSize.width / 2;
         } else if (
@@ -71,11 +63,12 @@ function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
         hero.pos.x < obstacles[1] - leeway &&
         hero.pos.x + heroSize.width > obstacles[0] + leeway
       ) {
-        collisionDirection = "TOP";
+        collisionDirection = 'TOP';
         if (hero.grapple === true) {
           hero.stopped = true;
         }
         hero.pos.y = obstacles[2] - heroSize.height - leeway;
+        // hero.topBound = obstacles[2] - heroSize.height - leeway;
         return;
       }
     }
@@ -83,7 +76,7 @@ function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
   if (collision === false) {
     if (hero.grapple === false) {
       hero.vel.y += gravity;
-      collisionDirection = "NONE";
+      collisionDirection = 'NONE';
     }
   }
   if (hero.stopped === true) {
