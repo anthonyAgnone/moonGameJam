@@ -16,6 +16,91 @@ const spriteSize = {
 //   });
 // }
 
+function loadBOSSSprites() {
+  return loadImage("./img/spriteSheetBoss.png").then(image => {
+    const sprites = new SpriteSheet(image, 1096, 850);
+    sprites.define("idle1", 0, 0, 1096, 850);
+    sprites.define("idle2", 1, 0, 1096, 850);
+    sprites.define("idle3", 2, 0, 1096, 850);
+    sprites.define("idle4", 3, 0, 1096, 850);
+    sprites.define("idle5", 4, 0, 1096, 850);
+    sprites.define("idle6", 5, 0, 1096, 850);
+    sprites.define("idle7", 0, 1, 1096, 850);
+    sprites.define("idle8", 1, 1, 1096, 850);
+    sprites.define("idle9", 2, 1, 1096, 850);
+
+    sprites.define("idle1h", 3, 1, 1096, 850);
+    sprites.define("idle2h", 4, 1, 1096, 850);
+    sprites.define("idle3h", 5, 1, 1096, 850);
+    sprites.define("idle4h", 0, 2, 1096, 850);
+    sprites.define("idle5h", 1, 2, 1096, 850);
+    sprites.define("idle6h", 2, 2, 1096, 850);
+    sprites.define("idle7h", 3, 2, 1096, 850);
+    sprites.define("idle8h", 4, 2, 1096, 850);
+    sprites.define("idle9h", 5, 2, 1096, 850);
+
+    sprites.define("idle1b", 0, 3, 1096, 850);
+    sprites.define("idle2b", 1, 3, 1096, 850);
+    sprites.define("idle3b", 2, 3, 1096, 850);
+    sprites.define("idle4b", 3, 3, 1096, 850);
+    sprites.define("idle5b", 4, 3, 1096, 850);
+    sprites.define("idle6b", 5, 3, 1096, 850);
+    sprites.define("idle7b", 0, 4, 1096, 850);
+    sprites.define("idle8b", 1, 4, 1096, 850);
+    sprites.define("idle9b", 1, 4, 1096, 850);
+
+    sprites.define("swing1", 2, 4, 1096, 850);
+    sprites.define("swing2", 3, 4, 1096, 850);
+    sprites.define("swing3", 4, 4, 1096, 850);
+
+    sprites.define("swing1h", 5, 4, 1096, 850);
+    sprites.define("swing2h", 0, 5, 1096, 850);
+    sprites.define("swing3h", 1, 5, 1096, 850);
+
+    sprites.define("swing1b", 2, 5, 1096, 850);
+    sprites.define("swing2b", 3, 5, 1096, 850);
+    sprites.define("swing3b", 4, 5, 1096, 850);
+
+    sprites.define("swing11", 5, 5, 1096, 850);
+    sprites.define("swing22", 0, 6, 1096, 850);
+    sprites.define("swing33", 1, 6, 1096, 850);
+
+    sprites.define("swing11h", 2, 6, 1096, 850);
+    sprites.define("swing22h", 3, 6, 1096, 850);
+    sprites.define("swing33h", 4, 6, 1096, 850);
+
+    sprites.define("swing11b", 5, 6, 1096, 850);
+    sprites.define("swing22b", 0, 7, 1096, 850);
+    sprites.define("swing33b", 1, 7, 1096, 850);
+
+    sprites.define("swing111", 2, 7, 1096, 850);
+    sprites.define("swing222", 3, 7, 1096, 850);
+    sprites.define("swing333", 4, 7, 1096, 850);
+
+    sprites.define("swing111h", 5, 7, 1096, 850);
+    sprites.define("swing222h", 0, 8, 1096, 850);
+    sprites.define("swing333h", 1, 8, 1096, 850);
+
+    sprites.define("swing111b", 2, 8, 1096, 850);
+    sprites.define("swing222b", 3, 8, 1096, 850);
+    sprites.define("swing333b", 4, 8, 1096, 850);
+
+    sprites.define("death1", 5, 8, 1096, 850);
+    sprites.define("death2", 0, 9, 1096, 850);
+    sprites.define("death3", 1, 9, 1096, 850);
+    sprites.define("death4", 2, 9, 1096, 850);
+    sprites.define("death5", 3, 9, 1096, 850);
+    sprites.define("death6", 4, 9, 1096, 850);
+    sprites.define("death7", 5, 9, 1096, 850);
+    sprites.define("death8", 0, 10, 1096, 850);
+    sprites.define("death9", 1, 11, 1096, 850);
+    sprites.define("death10", 2, 12, 1096, 850);
+    sprites.define("death11", 3, 13, 1096, 850);
+    sprites.define("death12", 4, 14, 1096, 850);
+
+    return sprites;
+  });
+}
 function loadGumSprites() {
   return loadImage("./img/spriteSheetSpider.png").then(image => {
     const sprites = new SpriteSheet(image, 200, 150);
@@ -269,5 +354,6 @@ module.exports = {
   loadMageSprites: loadMageSprites,
   loadGrappleSpritesRight: loadGrappleSpritesRight,
   loadGrappleSpritesLeft: loadGrappleSpritesLeft,
-  loadMageProjectileSprites: loadMageProjectileSprites
+  loadMageProjectileSprites: loadMageProjectileSprites,
+  loadBOSSSprites: loadBOSSSprites
 };

@@ -28,7 +28,8 @@ const {
   loadMageSprites,
   loadGrappleSpritesRight,
   loadGrappleSpritesLeft,
-  loadMageProjectileSprites
+  loadMageProjectileSprites,
+  loadBOSSSprites
 } = require("./helpers/sprites");
 
 const SpritesJS = require("./helpers/sprites.js");
@@ -50,7 +51,7 @@ var mysound = new Audio("./snd/Strange_Stuff.mp3");
 mysound.loop = true;
 //mysound.play();
 
-let currentLevel = "1-1";
+let currentLevel = "test";
 
 // PROMISE ALL PERFORMS FOUR FUNCTIONS AND UPON SUCCESS THE DOT THEN HAPPENS WITH THOSE RESULTS
 
@@ -65,7 +66,8 @@ Promise.all([
   loadMageSprites(),
   loadGrappleSpritesRight(),
   loadGrappleSpritesLeft(),
-  loadMageProjectileSprites()
+  loadMageProjectileSprites(),
+  loadBOSSSprites()
 ]).then(
   ([
     hero,
@@ -78,7 +80,8 @@ Promise.all([
     mageSprites,
     grappleSpritesRight,
     grappleSpritesLeft,
-    mageProjSprites
+    mageProjSprites,
+    bossSprites
   ]) => {
     // initial globals
     const comp = new Compositor();
@@ -86,16 +89,31 @@ Promise.all([
     window.camera = camera;
     const gravity = 30;
     const timer = new Timer(1 / 60);
+    var moonHelmStatus = 0; //0 helm 1 head 2 bald
+    var moonAttack = false;
+    var moonIndex = 0;
+    var attack = Math.floor(Math.round(Math.random() * (2 - 0)));
+    var hurtboxHead = [];
+    var hurtboxBody = [];
+    var hurtboxSword = [];
+    var headw = 105;
+    var headh = 120;
+    var bodyw = 345;
+    var bodyh = 425;
+    var sww = 300;
+    var swh = 130;
+    var moonDeath = false;
+    setInitialPosition(hero, 10, 822);
     window.hero = hero;
-
-    setInitialPosition(hero, 15400, 800);
 
     //create Layers
 
     function mapLevelToArray(level) {
       var obs = new Array();
+      var obsDmg = new Array();
       for (var i = 0; i < level.backgrounds.length; i++) {
         const size = level.backgrounds[i].size;
+        obsDmg.push(level.backgrounds[i].dmg);
         level.backgrounds[i].ranges.forEach(lvl => {
           obs.push(
             lvl.map(function(tmp) {
@@ -105,7 +123,7 @@ Promise.all([
         });
       }
 
-      return obs;
+      return [obs, obsDmg];
     }
     function mapEnemiesToArray(level) {
       var enem = new Array();
@@ -126,7 +144,10 @@ Promise.all([
       return [enem, enemType, enemFrames];
     }
 
-    const obstacles = mapLevelToArray(level);
+    const obstaclesArr = mapLevelToArray(level);
+    const obstacles = obstaclesArr[0];
+    const obstaclesDmg = obstaclesArr[1];
+
     const enemArr = mapEnemiesToArray(level);
     var enemies = enemArr[0];
     const enemiesOrig = JSON.parse(JSON.stringify(enemies));
@@ -180,6 +201,7 @@ Promise.all([
 
     var randCount = 0;
     var randmCount = 0;
+    var randbCount = 0;
     var randX = 0;
     var mageProjArr = [];
     var mageProjVecArr = [];
@@ -228,16 +250,24 @@ Promise.all([
 
       if (camera.pos.x < 0) camera.pos.x = 0;
 
-      collisionDetect(hero, obstacles, heroSize, deltaTime, gravity);
-      context.beginPath();
-      drawOutline(
-        context,
-        hero.pos.x,
-        hero.pos.y,
-        heroSize.width,
-        heroSize.height,
-        camera
+      collisionDetect(
+        hero,
+        obstacles,
+        heroSize,
+        deltaTime,
+        gravity,
+        obstaclesDmg
       );
+      // console.log(obstaclesDmg);
+      context.beginPath();
+      // drawOutline(
+      //   context,
+      //   hero.pos.x,
+      //   hero.pos.y,
+      //   heroSize.width,
+      //   heroSize.height,
+      //   camera
+      // );
 
       context.font = "30px Arial Bold";
       context.fillStyle = "red";
@@ -324,7 +354,9 @@ Promise.all([
       // enemies
       const rando = Math.round(Math.random() * (100 - 100) + 100);
       const randX = Math.random() * (10 - -10) + -10;
+      // console.log(attack);
       randmCount += 1;
+      randbCount += 1;
       enemies.forEach(function(enem, index) {
         var w = 0;
         var h = 0;
@@ -339,29 +371,182 @@ Promise.all([
           obstarr = [enem[0], enem[0] + w, enem[1], enem[1] + h];
           obstarr[0] += 40;
           obstarr[2] -= 10;
-        } else if (enemType[index] == "whiteKnight") {
-          w = 180;
-          h = 120;
-          obstarr = [enem[0], enem[0] + w, enem[1], enem[1] + h];
-          obstarr[0] += 40;
-          obstarr[2] -= 10;
+        } else if (enemType[index] == "moon2BOSS") {
+          moonIndex = index;
+          w = 850;
+          h = 925;
+          obstarr = [enem[0] + 60, enem[0] + w, enem[1] - 120, enem[1] + h];
+          if (hurtboxSword.length < 4) {
+            headw = 105;
+            headh = 120;
+            bodyw = 345;
+            bodyh = 425;
+            sww = 300;
+            swh = 130;
+            hurtboxHead = [
+              obstarr[0] + 580,
+              obstarr[0] + 580 + headw,
+              obstarr[2] + 430,
+              obstarr[2] + 430 + headh
+            ];
+            hurtboxBody = [
+              obstarr[0] + 510,
+              obstarr[0] + 510 + bodyw,
+              obstarr[2] + 500,
+              obstarr[2] + 500 + bodyh
+            ];
+            hurtboxSword = [
+              obstarr[0] + 250,
+              obstarr[0] + 250 + sww,
+              obstarr[2] + 760,
+              obstarr[2] + 760 + swh
+            ];
+          }
+
+          //  console.log(enem);ss
+          //  console.log(enemFrames[index]);
+          // console.log(bossSprites.names[enemFrames[index]]);
+          bossSprites.draw(
+            bossSprites.names[enemFrames[index]],
+            context,
+            enem[0] - camera.pos.x,
+            enem[1] - camera.pos.y - 40
+          );
+
+          // drawOutline(context, obstarr[0], obstarr[2], w, h, camera);
+          // drawOutline(
+          //   context,
+          //   hurtboxHead[0],
+          //   hurtboxHead[2],
+          //   headw,
+          //   headh,
+          //   camera
+          // );
+          // drawOutline(
+          //   context,
+          //   hurtboxBody[0],
+          //   hurtboxBody[2],
+          //   bodyw,
+          //   bodyh,
+          //   camera
+          // );
+          // drawOutline(
+          //   context,
+          //   hurtboxSword[0],
+          //   hurtboxSword[2],
+          //   sww,
+          //   swh,
+          //   camera
+          // );
+          if (
+            randbCount >= 10 &&
+            enemies[index][0] - hero.pos.x < 1000 &&
+            enemies[index][1] - hero.pos.y < 1000
+          ) {
+            // boss anim
+            var animoffset = 0;
+            //     moonHelmStatus = 2;
+            enemFrames[index] += 1;
+            // if (moonAttack == true && enemFrames[index] == 30 + animoffset) {
+            //   enemFrames[index] = 0 + 9 * moonHelmStatus;
+            //   moonAttack = false;
+            // } else
+
+            // if (moonDeath === true) {
+            //   enemFrames[index] = 53;
+            // } else
+            if (
+              moonAttack == true &&
+              enemFrames[index] == 30 + 3 * moonHelmStatus + attack * 9
+            ) {
+              moonAttack = false;
+              enemFrames[index] = 0 + 9 * moonHelmStatus;
+              hurtboxSword = [];
+            } else if (
+              moonAttack == true &&
+              (enemFrames[index] == 45 ||
+                enemFrames[index] == 48 ||
+                enemFrames[index] == 51)
+            ) {
+              hurtboxSword[0] -= 200;
+              hurtboxSword[2] -= 260;
+              hurtboxSword[3] -= 260 + swh;
+            } else if (enemFrames[index] == 9 + 9 * moonHelmStatus) {
+              //if (rando > 0.95) {
+              moonAttack = true;
+
+              attack = Math.floor(Math.round(Math.random() * (2 - 0)));
+              attack = 2;
+              enemFrames[index] = 27 + 3 * moonHelmStatus + attack * 9;
+              if (attack == 0) {
+                swh *= 3;
+
+                hurtboxSword[0] -= 300;
+                hurtboxSword[1] -= 300;
+                hurtboxSword[2] -= 460;
+                hurtboxSword[3] -= 460 + swh;
+              } else if (attack == 1) {
+                swh *= 3;
+                hurtboxSword[0] += 75;
+                hurtboxSword[2] -= 460;
+                hurtboxSword[3] -= 460 + swh;
+              } else {
+                hurtboxSword[0] -= 200;
+                hurtboxSword[2] -= 260;
+                hurtboxSword[3] -= 260 + swh;
+              }
+
+              // }
+              //enemFrames[index] = 0 + animoffset;
+            }
+            randbCount = 0;
+          }
         }
-        if (
-          hero.pos.y + heroSize.height - camera.pos.y >
-            obstarr[2] - camera.pos.y &&
-          hero.pos.y - camera.pos.y < obstarr[3] - camera.pos.y &&
-          hero.pos.x - camera.pos.x < obstarr[1] - camera.pos.x &&
-          hero.pos.x + heroSize.width - camera.pos.x > obstarr[0] - camera.pos.x
-        ) {
-          enemFrames[index] = 4;
-          projFrames[index] = 5;
-          hero.hp -= 1;
-          console.log(index);
-          enemies.splice(index, 1);
-          enemType.splice(index, 1);
-          enemFrames.splice(index, 1);
-          enemiesOrig.splice(index, 1);
-          return;
+
+        if (enemType[index] !== "moon2BOSS") {
+          if (
+            hero.pos.y + heroSize.height - camera.pos.y >
+              obstarr[2] - camera.pos.y &&
+            hero.pos.y - camera.pos.y < obstarr[3] - camera.pos.y &&
+            hero.pos.x - camera.pos.x < obstarr[1] - camera.pos.x &&
+            hero.pos.x + heroSize.width - camera.pos.x >
+              obstarr[0] - camera.pos.x
+          ) {
+            //enemFrames[index] = 4;
+            //projFrames[index] = 5;
+            hero.hp -= 1;
+            console.log(index);
+            enemies.splice(index, 1);
+            enemType.splice(index, 1);
+            enemFrames.splice(index, 1);
+            enemiesOrig.splice(index, 1);
+            return;
+          }
+        } else {
+          if (
+            (hero.pos.y + heroSize.height - camera.pos.y >
+              hurtboxBody[2] - camera.pos.y &&
+              hero.pos.y - camera.pos.y < hurtboxBody[3] - camera.pos.y &&
+              hero.pos.x - camera.pos.x < hurtboxBody[1] - camera.pos.x &&
+              hero.pos.x + heroSize.width - camera.pos.x >
+                hurtboxBody[0] - camera.pos.x) ||
+            (hero.pos.y + heroSize.height - camera.pos.y >
+              hurtboxSword[2] - camera.pos.y &&
+              hero.pos.y - camera.pos.y < hurtboxSword[3] - camera.pos.y &&
+              hero.pos.x - camera.pos.x < hurtboxSword[1] - camera.pos.x &&
+              hero.pos.x + heroSize.width - camera.pos.x >
+                hurtboxSword[0] - camera.pos.x)
+          ) {
+            // enemFrames[index] = 4;
+            //projFrames[index] = 5;
+            hero.hp -= 1;
+            //  console.log(index);
+            // enemies.splice(index, 1);
+            // enemType.splice(index, 1);
+            // enemFrames.splice(index, 1);
+            // enemiesOrig.splice(index, 1);
+            return;
+          }
         }
         var tmpa = 0;
         if (enemType[index] === "moon2GUM") {
@@ -471,7 +656,7 @@ Promise.all([
             mproj[0] - camera.pos.x,
             mproj[1] - camera.pos.y
           );
-          drawOutline(context, mproj[0], mproj[1], 88, 43, camera);
+          // drawOutline(context, mproj[0], mproj[1], 88, 43, camera);
           mproj[0] += mageProjVecArr[mindex][0];
           mproj[1] += mageProjVecArr[mindex][1];
 
@@ -530,9 +715,6 @@ Promise.all([
           );
           proj[0] += projVecArr[index][0];
           proj[1] += projVecArr[index][1];
-          if (proj[0] > hero.pos.x + 800) {
-            remInd.push(index);
-          }
 
           projFrames[index] += 1;
           if (projFrames[index] == 5) {
@@ -550,6 +732,37 @@ Promise.all([
               w = 200;
               h = 150;
               obstarr = [obst[0], obst[0] + w, obst[1], obst[1] + h];
+            } else if (enemType[eIndex] == "moon2BOSS") {
+              if (
+                proj[1] + 40 - camera.pos.y > hurtboxHead[2] - camera.pos.y &&
+                proj[1] - camera.pos.y < hurtboxHead[3] - camera.pos.y &&
+                proj[0] - camera.pos.x < hurtboxHead[1] - camera.pos.x &&
+                proj[0] + 65 - camera.pos.x > hurtboxHead[0] - camera.pos.x
+
+                // hero.pos.y + heroSize.height > obstacles[2] + leeway &&
+                // hero.pos.y < obstacles[3] - leeway &&
+                // hero.pos.x < obstacles[1] - leeway &&
+                // hero.pos.x + heroSize.width > obstacles[0] + leeway
+              ) {
+                // enemFrames[eIndex] = 4;
+                // projFrames[index] = 5;
+
+                if (moonHelmStatus < 2) {
+                  moonHelmStatus += 1;
+                } else {
+                  moonDeath = true;
+                  enemFrames[moonIndex] = 53;
+                  setTimeout(() => {
+                    enemies.splice(eIndex, 1);
+                    enemType.splice(eIndex, 1);
+                    enemFrames.splice(eIndex, 1);
+                    enemiesOrig.splice(eIndex, 1);
+                  }, 2000);
+                }
+                projArr.splice(index, 1);
+                projFrames.splice(index, 1);
+                projVecArr.splice(index, 1);
+              }
             } else if (enemType[eIndex] == "moon2MAGE") {
               w = 180;
               h = 220;
@@ -586,6 +799,12 @@ Promise.all([
               }, 75);
             }
           });
+
+          if (proj[0] > hero.pos.x + 1000) {
+            projArr.splice(index, 1);
+            projFrames.splice(index, 1);
+            projVecArr.splice(index, 1);
+          }
         });
       }
     };
