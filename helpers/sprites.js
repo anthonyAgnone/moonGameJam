@@ -41,6 +41,24 @@ function loadMageSprites() {
     return sprites;
   });
 }
+function loadMageProjectileSprites() {
+  return loadImage("./img/spriteSheetEnemyFireball.png").then(image => {
+    const sprites = new SpriteSheet(image, 88, 43);
+    sprites.define("fireball1", 0, 1, 88, 43);
+    sprites.define("fireball2", 1, 1, 88, 43);
+    sprites.define("fireball3", 2, 1, 88, 43);
+    sprites.define("fireball4", 3, 1, 88, 43);
+    sprites.define("fireball5", 4, 1, 88, 43);
+    sprites.define("fireball6", 5, 1, 88, 43);
+    sprites.define("fireballL1", 0, 0, 88, 43);
+    sprites.define("fireballL2", 1, 0, 88, 43);
+    sprites.define("fireballL3", 2, 0, 88, 43);
+    sprites.define("fireballL4", 3, 0, 88, 43);
+    sprites.define("fireballL5", 4, 0, 88, 43);
+    sprites.define("fireballL6", 5, 0, 88, 43);
+    return sprites;
+  });
+}
 function loadProjectileSprites() {
   return loadImage("./img/spriteSheetFireball.png").then(image => {
     const sprites = new SpriteSheet(image, 88, 43);
@@ -239,5 +257,6 @@ module.exports = {
   loadGumSprites: loadGumSprites,
   loadMageSprites: loadMageSprites,
   loadGrappleSpritesRight: loadGrappleSpritesRight,
-  loadGrappleSpritesLeft: loadGrappleSpritesLeft
+  loadGrappleSpritesLeft: loadGrappleSpritesLeft,
+  loadMageProjectileSprites: loadMageProjectileSprites
 };

@@ -13,6 +13,7 @@ const {
   setInitialPosition,
   addKeyMapping
 } = require("./helpers/helperFunctions");
+const { drawOutline } = require("./helpers/drawOutline");
 const { collisionDetect } = require("./helpers/collisionDetect");
 const { collisionDetectProj } = require("./helpers/collisionDetectProj");
 const { levelTransition } = require("./helpers/levelTransition");
@@ -26,7 +27,8 @@ const {
   loadGumSprites,
   loadMageSprites,
   loadGrappleSpritesRight,
-  loadGrappleSpritesLeft
+  loadGrappleSpritesLeft,
+  loadMageProjectileSprites
 } = require("./helpers/sprites");
 
 const SpritesJS = require("./helpers/sprites.js");
@@ -46,7 +48,7 @@ const context = canvas.getContext("2d");
 
 var mysound = new Audio("./snd/Strange_Stuff.mp3");
 mysound.loop = true;
-mysound.play();
+//mysound.play();
 
 let currentLevel = "1-1";
 
@@ -62,7 +64,8 @@ Promise.all([
   loadGumSprites(),
   loadMageSprites(),
   loadGrappleSpritesRight(),
-  loadGrappleSpritesLeft()
+  loadGrappleSpritesLeft(),
+  loadMageProjectileSprites()
 ]).then(
   ([
     hero,
@@ -74,7 +77,8 @@ Promise.all([
     gumSprites,
     mageSprites,
     grappleSpritesRight,
-    grappleSpritesLeft
+    grappleSpritesLeft,
+    mageProjSprites
   ]) => {
     // initial globals
     const comp = new Compositor();
@@ -173,9 +177,14 @@ Promise.all([
 
     //timer update functions
 
-    let randCount = 0;
-    let randX = 0;
-
+    var randCount = 0;
+    var randmCount = 0;
+    var randX = 0;
+    var mageProjArr = [];
+    var mageProjVecArr = [];
+    var mageProjFrames = [];
+    var mageProjOrig = [];
+    var mageProjInd = [];
     let transition = false;
     let bossTransition = false;
 
@@ -196,9 +205,19 @@ Promise.all([
       if (camera.pos.x < 0) camera.pos.x = 0;
 
       collisionDetect(hero, obstacles, heroSize, deltaTime, gravity);
-      context.strokeStyle = "red";
       context.beginPath();
+      drawOutline(
+        context,
+        hero.pos.x,
+        hero.pos.y,
+        heroSize.width,
+        heroSize.height,
+        camera
+      );
 
+      context.font = "30px Arial Bold";
+      context.fillStyle = "red";
+      context.fillText("Life Remaining : " + hero.hp, 10, 30);
       //fire grappling particle effect
       if (isMouseDown) {
         let particlePosition = new Vec2(0, 0);
@@ -279,14 +298,47 @@ Promise.all([
       }
 
       // enemies
+      const rando = Math.round(Math.random() * (100 - 100) + 100);
+      const randX = Math.random() * (10 - -10) + -10;
+      randmCount += 1;
       enemies.forEach(function(enem, index) {
+        var w = 0;
+        var h = 0;
+        var obstarr = [];
+        if (enemType[index] == "moon2GUM") {
+          w = 200;
+          h = 150;
+          obstarr = [enem[0], enem[0] + w, enem[1], enem[1] + h];
+        } else if (enemType[index] == "moon2MAGE") {
+          w = 180;
+          h = 220;
+          obstarr = [enem[0], enem[0] + w, enem[1], enem[1] + h];
+          obstarr[0] += 40;
+          obstarr[2] -= 10;
+        }
+        if (
+          hero.pos.y + heroSize.height - camera.pos.y >
+            obstarr[2] - camera.pos.y &&
+          hero.pos.y - camera.pos.y < obstarr[3] - camera.pos.y &&
+          hero.pos.x - camera.pos.x < obstarr[1] - camera.pos.x &&
+          hero.pos.x + heroSize.width - camera.pos.x > obstarr[0] - camera.pos.x
+        ) {
+          enemFrames[index] = 4;
+          projFrames[index] = 5;
+          hero.hp -= 1;
+          console.log(index);
+          enemies.splice(index, 1);
+          enemType.splice(index, 1);
+          enemFrames.splice(index, 1);
+          enemiesOrig.splice(index, 1);
+          return;
+        }
         var tmpa = 0;
         if (enemType[index] === "moon2GUM") {
           //  tmpa = Math.floor(enemFrames[index] / 11);
 
           randCount += 1;
           if (randCount == 25) {
-            randX = Math.random() * (10 - -10) + -10;
             randCount = 0;
 
             //console.log(enem[0] + ' ' + enemiesOrig[index][0]);
@@ -310,19 +362,38 @@ Promise.all([
             }
           }
           //  console.log(enem);
-          if (enemType[index] === "moon2GUM") {
-            gumSprites.draw(
-              gumSprites.names[enemFrames[index]],
-              context,
-              enem[0] - camera.pos.x,
-              enem[1] - camera.pos.y - 20
-            );
-          }
+          gumSprites.draw(
+            gumSprites.names[enemFrames[index]],
+            context,
+            enem[0] - camera.pos.x,
+            enem[1] - camera.pos.y - 20
+          );
         } else if (enemType[index] === "moon2MAGE") {
-          randCount += 1;
-          if (randCount == 25) {
-            randX = Math.random() * (10 - -10) + -10;
-            randCount = 0;
+          // console.log(index + ' ' + randmCount + ' ' + rando);
+          if (
+            randmCount >= 100 &&
+            enemies[index][0] - hero.pos.x < 500 &&
+            enemies[index][1] - hero.pos.y < 500
+          ) {
+            if (rando > 0.95) {
+              mageProjArr.push([enem[0], enem[1], 50, 50]);
+
+              mageProjVecArr.push([
+                (hero.pos.x - enem[0]) / 200,
+                (hero.pos.y - enem[1]) / 200
+              ]);
+              mageProjInd.push(index);
+              mageProjOrig.push([enemiesOrig[index][0], enemiesOrig[index][1]]);
+              if (hero.pos.x - enem[0] < 0) {
+                mageProjFrames.push(8);
+              } else {
+                mageProjFrames.push(0);
+              }
+            }
+
+            if (randmCount >= 101) {
+              randmCount = 0;
+            }
 
             //console.log(enem[0] + ' ' + enemiesOrig[index][0]);
             if (
@@ -344,15 +415,7 @@ Promise.all([
               enemFrames[index] = 1;
             }
           }
-          //  console.log(enem);
-          if (enemType[index] === "moon2GUM") {
-            gumSprites.draw(
-              gumSprites.names[enemFrames[index]],
-              context,
-              enem[0] - camera.pos.x,
-              enem[1] - camera.pos.y - 20
-            );
-          }
+          //  console
           mageSprites.draw(
             mageSprites.names[enemFrames[index]],
             context,
@@ -365,6 +428,64 @@ Promise.all([
       // projectiles
       if (hero.shooting === true) {
         hero.shootFrame += 1;
+      }
+      // console.log(mageProjArr);
+      var remmInd = [];
+      if (mageProjArr.length > 0) {
+        mageProjArr.forEach(function(mproj, mindex) {
+          // console.log(mproj);
+          // console.log(projSprites.names[mageProjFrames[mindex]]);
+          mageProjSprites.draw(
+            mageProjSprites.names[mageProjFrames[mindex]],
+            context,
+            mproj[0] - camera.pos.x,
+            mproj[1] - camera.pos.y
+          );
+          drawOutline(context, mproj[0], mproj[1], 88, 43, camera);
+          mproj[0] += mageProjVecArr[mindex][0];
+          mproj[1] += mageProjVecArr[mindex][1];
+
+          mageProjFrames[mindex] += 1;
+          if (mageProjFrames[mindex] == 5) {
+            mageProjFrames[mindex] = 2;
+          } else if (mageProjFrames[mindex] == 11) {
+            mageProjFrames[mindex] = 8;
+          }
+          //console.log(Math.abs(mproj[1] - mageProjOrig[mindex][1]));
+          if (
+            Math.abs(mproj[0] - mageProjOrig[mindex][0]) > 400 ||
+            Math.abs(mproj[1] - mageProjOrig[mindex][1]) > 400
+          ) {
+            mageProjArr.splice(mindex, 1);
+            mageProjFrames.splice(mindex, 1);
+            mageProjVecArr.splice(mindex, 1);
+            mageProjOrig.splice(mindex, 1);
+            // enemies.splice(mageProjInd[remmInd[(i -= count)]], 1);
+            mageProjInd.splice(mindex, 1);
+          } else {
+            if (
+              hero.pos.y + heroSize.height - camera.pos.y >
+                mproj[1] - camera.pos.y &&
+              hero.pos.y - camera.pos.y < mproj[1] + 43 - camera.pos.y &&
+              hero.pos.x - camera.pos.x < mproj[0] + 88 - camera.pos.x &&
+              hero.pos.x + heroSize.width - camera.pos.x >
+                mproj[0] - camera.pos.x
+            ) {
+              //enemFrames[eIndex] = 4;
+              // projFrames[index] = 5;
+              // remIndEnemy.push(eIndex);
+              //remInd.push(index);
+              hero.hp -= 1;
+              // remmInd.push(mindex);
+              mageProjArr.splice(mindex, 1);
+              mageProjFrames.splice(mindex, 1);
+              mageProjVecArr.splice(mindex, 1);
+              mageProjOrig.splice(mindex, 1);
+              // enemies.splice(mageProjInd[remmInd[(i -= count)]], 1);
+              mageProjInd.splice(mindex, 1);
+            }
+          }
+        });
       }
 
       var remInd = [];
@@ -390,51 +511,52 @@ Promise.all([
             projFrames[index] = 8;
           }
 
-          const leeway = 10;
+          const leeway = 0;
           enemies.forEach(function(obst, eIndex) {
-            const w = 88;
-            const h = 43;
-            var obstarr = [obst[0], obst[0] + w, obst[1], obst[1] + h];
+            var w = 0;
+            var h = 0;
+            var obstarr = [];
+            if (enemType[eIndex] == "moon2GUM") {
+              w = 200;
+              h = 150;
+              obstarr = [obst[0], obst[0] + w, obst[1], obst[1] + h];
+            } else if (enemType[eIndex] == "moon2MAGE") {
+              w = 180;
+              h = 220;
+              obstarr = [obst[0], obst[0] + w, obst[1], obst[1] + h];
+              obstarr[0] += 40;
+              obstarr[2] -= 10;
+            }
+            // drawOutline(context, obstarr[0], obstarr[2], w, h, camera);
+            // drawOutline(context, proj[0], proj[1], 65, 40, camera);
+
             if (
-              proj[1] + h > obstarr[2] + leeway - camera.pos.y &&
-              proj[1] < obstarr[3] - leeway - camera.pos.y &&
-              proj[0] < obstarr[1] - leeway &&
-              proj[0] + w > obstarr[0] + leeway
+              proj[1] + 40 - camera.pos.y > obstarr[2] - camera.pos.y &&
+              proj[1] - camera.pos.y < obstarr[3] - camera.pos.y &&
+              proj[0] - camera.pos.x < obstarr[1] - camera.pos.x &&
+              proj[0] + 65 - camera.pos.x > obstarr[0] - camera.pos.x
+
+              // hero.pos.y + heroSize.height > obstacles[2] + leeway &&
+              // hero.pos.y < obstacles[3] - leeway &&
+              // hero.pos.x < obstacles[1] - leeway &&
+              // hero.pos.x + heroSize.width > obstacles[0] + leeway
             ) {
               enemFrames[eIndex] = 4;
               projFrames[index] = 5;
-              remIndEnemy.push(eIndex);
-              remInd.push(index);
+
+              projArr.splice(index, 1);
+              projFrames.splice(index, 1);
+              projVecArr.splice(index, 1);
+
+              setTimeout(() => {
+                enemies.splice(eIndex, 1);
+                enemType.splice(eIndex, 1);
+                enemFrames.splice(eIndex, 1);
+                enemiesOrig.splice(eIndex, 1);
+              }, 75);
             }
           });
         });
-
-        if (remInd.length > 0) {
-          //   projArr.splice(remInd);
-          //projArr[remInd] = [];
-          var count = 0;
-          for (var i = 0; i < remInd.length; i++) {
-            projArr.splice(remInd[(i -= count)], 1);
-            projFrames.splice(remInd[(i -= count)], 1);
-            projVecArr.splice(remInd[(i -= count)], 1);
-            count += 1;
-          }
-        }
-        if (remIndEnemy.length > 0) {
-          //   projArr.splice(remInd);
-          //projArr[remInd] = [];
-
-          setTimeout(() => {
-            var count = 0;
-            for (var i = 0; i < remIndEnemy.length; i++) {
-              enemies.splice(remIndEnemy[(i -= count)], 1);
-              enemType.splice(remIndEnemy[(i -= count)], 1);
-              enemFrames.splice(remIndEnemy[(i -= count)], 1);
-              count += 1;
-            }
-          }, 100);
-        }
-        remInd = [];
       }
     };
 
@@ -470,6 +592,11 @@ Promise.all([
                   Math.pow(click.y - hero.pos.y, 2)
               ) < 700
             ) {
+              hero.pos.y += -20;
+              hero.grapple = true;
+              hero.grapplePos.x = click.x;
+              hero.grapplePos.y = click.y;
+
               if (click.x >= hero.pos.x) {
                 hero.facingLeft = false;
               } else {
@@ -477,13 +604,9 @@ Promise.all([
                   hero.facingLeft = true;
                 }
               }
-              hero.pos.y += -20;
-              hero.grapple = true;
-              hero.grapplePos.x = click.x;
-              hero.grapplePos.y = click.y;
               hero.vel.set(
-                hero.grapplePos.x - hero.pos.x + 200,
-                hero.grapplePos.y - hero.pos.y - 200
+                (hero.grapplePos.x - hero.pos.x) * 1.5,
+                (hero.grapplePos.y - hero.pos.y) * 1.5
               );
             }
           }

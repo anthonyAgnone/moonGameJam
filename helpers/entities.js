@@ -103,14 +103,6 @@ function createHero(h, w) {
       )
         return framesSh[currentFrame];
       else if (
-        hero.lastPos.x !== hero.pos.x &&
-        hero.lastPos.y == hero.pos.y &&
-        hero.vel.x < 0
-      )
-        return framesL[currentFrame];
-      else if (hero.lastPos.x !== hero.pos.x && hero.lastPos.y == hero.pos.y)
-        return frames[currentFrame];
-      else if (
         hero.shooting === true &&
         hero.collisionDirection === 'BOTTOM' &&
         hero.shootingLeft === true
@@ -142,6 +134,14 @@ function createHero(h, w) {
       else if (hero.grapple === true && hero.facingLeft === true)
         return 'grappleL';
       else if (hero.grapple === true) return 'grapple';
+      else if (
+        hero.lastPos.x !== hero.pos.x &&
+        hero.lastPos.y == hero.pos.y &&
+        hero.vel.x < 0
+      )
+        return framesL[currentFrame];
+      else if (hero.lastPos.x !== hero.pos.x && hero.lastPos.y == hero.pos.y)
+        return frames[currentFrame];
       else if (hero.facingLeft === true && hero.vel.x < 0) return 'jump1L';
       else if (hero.vel.y < 0) return 'jump1';
       else if (
