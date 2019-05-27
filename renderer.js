@@ -86,8 +86,9 @@ Promise.all([
     window.camera = camera;
     const gravity = 30;
     const timer = new Timer(1 / 60);
+    window.hero = hero;
 
-    setInitialPosition(hero, 8035, 822);
+    setInitialPosition(hero, 15400, 800);
 
     //create Layers
 
@@ -187,11 +188,24 @@ Promise.all([
     var mageProjInd = [];
     let transition = false;
     let bossTransition = false;
+    window.GAMEOVER = false;
 
     timer.update = function update(deltaTime) {
       comp.draw(context, camera);
+      if (hero.pos.y > 1150) window.GAMEOVER = true;
+      if (hero.hp < 1) window.GAMEOVER = true;
 
       if (hero.pos.x > 6400) {
+        if (window.GAMEOVER) {
+          hero.isDead = true;
+          // setInitialPosition(hero, 6600, 800);
+          // window.GAMEOVER = false;
+          setTimeout(function() {
+            setInitialPosition(hero, 6600, 714);
+            window.GAMEOVER = false;
+            hero.isDead = false;
+          }, 1000);
+        }
         camera.pos.x = lerp(camera.pos.x, hero.pos.x, 0.1);
         camera.pos.y = hero.pos.y * 0.3;
         transition = true;
@@ -199,6 +213,16 @@ Promise.all([
           canvas.classList.add("shook");
         }
       } else {
+        if (window.GAMEOVER) {
+          hero.isDead = true;
+          // setInitialPosition(hero, 6600, 800);
+          // window.GAMEOVER = false;
+          setTimeout(function() {
+            setInitialPosition(hero, 0, 800);
+            window.GAMEOVER = false;
+            hero.isDead = false;
+          }, 1000);
+        }
         camera.setPosition(hero.pos.x * 0.8, hero.pos.y * 0.05);
       }
 
@@ -312,6 +336,12 @@ Promise.all([
         } else if (enemType[index] == "moon2MAGE") {
           w = 180;
           h = 220;
+          obstarr = [enem[0], enem[0] + w, enem[1], enem[1] + h];
+          obstarr[0] += 40;
+          obstarr[2] -= 10;
+        } else if (enemType[index] == "whiteKnight") {
+          w = 180;
+          h = 120;
           obstarr = [enem[0], enem[0] + w, enem[1], enem[1] + h];
           obstarr[0] += 40;
           obstarr[2] -= 10;

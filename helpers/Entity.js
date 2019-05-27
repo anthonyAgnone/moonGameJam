@@ -8,7 +8,8 @@ class Entity {
     this.startPoint = this.pos.x;
     this.height = h;
     this.width = w;
-    this.isFlying = false;
+    this.isFlying = true;
+    this.isDead = false;
     this.grapplePos = new Vec2(0, 0);
     this.grapple = false;
     this.stopped = false;
@@ -22,6 +23,7 @@ class Entity {
     this.topBound = 0;
     this.dead = false;
     this.hp = 3;
+    this.noKeyBinds = false;
   }
 }
 

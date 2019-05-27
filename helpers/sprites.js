@@ -80,6 +80,14 @@ function loadProjectileSprites() {
 function loadHeroSprite() {
   return loadImage("./img/spriteSheetHero.png").then(image => {
     const sprite = new SpriteSheet(image, 231, 227);
+    sprite.define("dead0", 0, 13, spriteSize.width, spriteSize.height);
+    sprite.define("dead1", 1, 13, spriteSize.width, spriteSize.height);
+    sprite.define("dead2", 2, 13, spriteSize.width, spriteSize.height);
+    sprite.define("dead3", 3, 13, spriteSize.width, spriteSize.height);
+    sprite.define("dead4", 4, 13, spriteSize.width, spriteSize.height);
+    sprite.define("dead5", 5, 13, spriteSize.width, spriteSize.height);
+    sprite.define("dead6", 6, 14, spriteSize.width, spriteSize.height);
+
     sprite.define("idle", 1, 2, spriteSize.width, spriteSize.height);
     sprite.define("idleL", 1, 9, spriteSize.width, spriteSize.height);
 
@@ -205,7 +213,10 @@ function loadLevelBlocks() {
     blocks.define("cross5", 12, 2, 100, 100);
     blocks.define("cross6", 11, 3, 100, 100);
     blocks.define("cross7", 12, 3, 100, 100);
-    blocks.define("rightSpike0", 5, 3, 100, 100);
+    blocks.define("leftSpike0", 5, 3, 100, 100);
+    blocks.define("leftSpike1", 5, 4, 100, 100);
+    blocks.define("rightSpike0", 6, 3, 100, 100);
+    blocks.define("rightSpike1", 6, 4, 100, 100);
     return blocks;
   });
 }
