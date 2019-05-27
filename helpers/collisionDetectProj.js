@@ -27,7 +27,7 @@ function collisionDetectProj(actor, obs, w, h, camera, deltaTime, gravity) {
       hero.pos.x + heroSize.width > obstacles[0] + leeway - camera.pos.x
     ) {
       collision = true;
-      console.log('HIT');
+      console.log("HIT");
       return 1;
     }
   });

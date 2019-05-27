@@ -25,6 +25,8 @@ function collisionDetect(hero, obs, heroSize, deltaTime, gravity, dmg) {
         collisionDirection = 'RIGHT';
         if (hero.grapple === true) {
           hero.stopped = true;
+        } else {
+          hero.vel.y = 100;
         }
         hero.pos.x = obstacles[1] - leeway;
         return;

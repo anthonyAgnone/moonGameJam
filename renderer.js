@@ -1,22 +1,22 @@
-'use strict';
+"use strict";
 
 // DEPENDENCIES AND IMPORTS
 
-const Compositor = require('./helpers/Compositor');
-const Timer = require('./helpers/Timer');
-const { loadLevel } = require('./helpers/loaders.js');
-const { createHero, createProj } = require('./helpers/entities');
-const Keyboard = require('./helpers/KeyboardState');
-const Camera = require('./helpers/Camera');
-const { getMousePos } = require('./helpers/mousePos');
+const Compositor = require("./helpers/Compositor");
+const Timer = require("./helpers/Timer");
+const { loadLevel } = require("./helpers/loaders.js");
+const { createHero, createProj } = require("./helpers/entities");
+const Keyboard = require("./helpers/KeyboardState");
+const Camera = require("./helpers/Camera");
+const { getMousePos } = require("./helpers/mousePos");
 const {
   setInitialPosition,
   addKeyMapping
-} = require('./helpers/helperFunctions');
-const { drawOutline } = require('./helpers/drawOutline');
-const { collisionDetect } = require('./helpers/collisionDetect');
-const { collisionDetectProj } = require('./helpers/collisionDetectProj');
-const { levelTransition } = require('./helpers/levelTransition');
+} = require("./helpers/helperFunctions");
+const { drawOutline } = require("./helpers/drawOutline");
+const { collisionDetect } = require("./helpers/collisionDetect");
+const { collisionDetectProj } = require("./helpers/collisionDetectProj");
+const { levelTransition } = require("./helpers/levelTransition");
 
 const {
   loadBackgroundSprites,
@@ -30,10 +30,10 @@ const {
   loadGrappleSpritesLeft,
   loadMageProjectileSprites,
   loadBOSSSprites
-} = require('./helpers/sprites');
+} = require("./helpers/sprites");
 
-const SpritesJS = require('./helpers/sprites.js');
-const { Vec2, interpolate, lerp } = require('./helpers/math');
+const SpritesJS = require("./helpers/sprites.js");
+const { Vec2, interpolate, lerp } = require("./helpers/math");
 const heroSize = SpritesJS.spriteSize;
 
 const {
@@ -42,16 +42,16 @@ const {
   createScrollingLayer,
   createSpriteLayer,
   createCameraLayer
-} = require('./helpers/layers');
+} = require("./helpers/layers");
 
-const canvas = document.getElementById('canvas');
-const context = canvas.getContext('2d');
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
 
-var mysound = new Audio('./snd/Strange_Stuff.mp3');
+var mysound = new Audio("./snd/Strange_Stuff.mp3");
 mysound.loop = true;
 //mysound.play();
 
-let currentLevel = 'test';
+let currentLevel = "test";
 
 // PROMISE ALL PERFORMS FOUR FUNCTIONS AND UPON SUCCESS THE DOT THEN HAPPENS WITH THOSE RESULTS
 
@@ -104,6 +104,7 @@ Promise.all([
     var swh = 130;
     var moonDeath = false;
     setInitialPosition(hero, 10, 822);
+    window.hero = hero;
 
     //create Layers
 
@@ -209,18 +210,41 @@ Promise.all([
     var mageProjInd = [];
     let transition = false;
     let bossTransition = false;
+    window.GAMEOVER = false;
 
     timer.update = function update(deltaTime) {
       comp.draw(context, camera);
+      if (hero.pos.y > 1150) window.GAMEOVER = true;
+      if (hero.hp < 1) window.GAMEOVER = true;
 
       if (hero.pos.x > 6400) {
+        if (window.GAMEOVER) {
+          hero.isDead = true;
+          // setInitialPosition(hero, 6600, 800);
+          // window.GAMEOVER = false;
+          setTimeout(function() {
+            setInitialPosition(hero, 6600, 714);
+            window.GAMEOVER = false;
+            hero.isDead = false;
+          }, 1000);
+        }
         camera.pos.x = lerp(camera.pos.x, hero.pos.x, 0.1);
         camera.pos.y = hero.pos.y * 0.3;
         transition = true;
-        if (!canvas.classList.contains('shook')) {
-          canvas.classList.add('shook');
+        if (!canvas.classList.contains("shook")) {
+          canvas.classList.add("shook");
         }
       } else {
+        if (window.GAMEOVER) {
+          hero.isDead = true;
+          // setInitialPosition(hero, 6600, 800);
+          // window.GAMEOVER = false;
+          setTimeout(function() {
+            setInitialPosition(hero, 0, 800);
+            window.GAMEOVER = false;
+            hero.isDead = false;
+          }, 1000);
+        }
         camera.setPosition(hero.pos.x * 0.8, hero.pos.y * 0.05);
       }
 
@@ -245,9 +269,9 @@ Promise.all([
       //   camera
       // );
 
-      context.font = '30px Arial Bold';
-      context.fillStyle = 'red';
-      context.fillText('Life Remaining : ' + hero.hp, 10, 30);
+      context.font = "30px Arial Bold";
+      context.fillStyle = "red";
+      context.fillText("Life Remaining : " + hero.hp, 10, 30);
       //fire grappling particle effect
       if (isMouseDown) {
         let particlePosition = new Vec2(0, 0);
@@ -337,17 +361,17 @@ Promise.all([
         var w = 0;
         var h = 0;
         var obstarr = [];
-        if (enemType[index] == 'moon2GUM') {
+        if (enemType[index] == "moon2GUM") {
           w = 200;
           h = 150;
           obstarr = [enem[0], enem[0] + w, enem[1], enem[1] + h];
-        } else if (enemType[index] == 'moon2MAGE') {
+        } else if (enemType[index] == "moon2MAGE") {
           w = 180;
           h = 220;
           obstarr = [enem[0], enem[0] + w, enem[1], enem[1] + h];
           obstarr[0] += 40;
           obstarr[2] -= 10;
-        } else if (enemType[index] == 'moon2BOSS') {
+        } else if (enemType[index] == "moon2BOSS") {
           moonIndex = index;
           w = 850;
           h = 925;
@@ -479,7 +503,7 @@ Promise.all([
           }
         }
 
-        if (enemType[index] !== 'moon2BOSS') {
+        if (enemType[index] !== "moon2BOSS") {
           if (
             hero.pos.y + heroSize.height - camera.pos.y >
               obstarr[2] - camera.pos.y &&
@@ -516,7 +540,7 @@ Promise.all([
             // enemFrames[index] = 4;
             //projFrames[index] = 5;
             hero.hp -= 1;
-          //  console.log(index);
+            //  console.log(index);
             // enemies.splice(index, 1);
             // enemType.splice(index, 1);
             // enemFrames.splice(index, 1);
@@ -525,7 +549,7 @@ Promise.all([
           }
         }
         var tmpa = 0;
-        if (enemType[index] === 'moon2GUM') {
+        if (enemType[index] === "moon2GUM") {
           //  tmpa = Math.floor(enemFrames[index] / 11);
 
           randCount += 1;
@@ -559,7 +583,7 @@ Promise.all([
             enem[0] - camera.pos.x,
             enem[1] - camera.pos.y - 20
           );
-        } else if (enemType[index] === 'moon2MAGE') {
+        } else if (enemType[index] === "moon2MAGE") {
           // console.log(index + ' ' + randmCount + ' ' + rando);
           if (
             randmCount >= 100 &&
@@ -704,11 +728,11 @@ Promise.all([
             var w = 0;
             var h = 0;
             var obstarr = [];
-            if (enemType[eIndex] == 'moon2GUM') {
+            if (enemType[eIndex] == "moon2GUM") {
               w = 200;
               h = 150;
               obstarr = [obst[0], obst[0] + w, obst[1], obst[1] + h];
-            } else if (enemType[eIndex] == 'moon2BOSS') {
+            } else if (enemType[eIndex] == "moon2BOSS") {
               if (
                 proj[1] + 40 - camera.pos.y > hurtboxHead[2] - camera.pos.y &&
                 proj[1] - camera.pos.y < hurtboxHead[3] - camera.pos.y &&
@@ -739,7 +763,7 @@ Promise.all([
                 projFrames.splice(index, 1);
                 projVecArr.splice(index, 1);
               }
-            } else if (enemType[eIndex] == 'moon2MAGE') {
+            } else if (enemType[eIndex] == "moon2MAGE") {
               w = 180;
               h = 220;
               obstarr = [obst[0], obst[0] + w, obst[1], obst[1] + h];
@@ -785,7 +809,7 @@ Promise.all([
       }
     };
 
-    var collisionDirection = 'NONE';
+    var collisionDirection = "NONE";
 
     // input listeners
     const input = new Keyboard();
@@ -794,7 +818,7 @@ Promise.all([
     var projArr = new Array();
     var projVecArr = new Array();
     var projFrames = [];
-    window.addEventListener('mousedown', event => {
+    window.addEventListener("mousedown", event => {
       const click = getMousePos(canvas, event);
       if (event.shiftKey) {
         hero.pos.x = click.x;
@@ -864,11 +888,11 @@ Promise.all([
       }
     });
 
-    window.addEventListener('mouseup', () => {
+    window.addEventListener("mouseup", () => {
       if (event.button === 0) {
         hero.grapple = false;
         hero.stopped = false;
-        collisionDirection = 'NONE';
+        collisionDirection = "NONE";
         grappleReturnLeft = 0;
         grappleReturnRight = 0;
         isMouseDown = false;

@@ -36,7 +36,7 @@ function createScrollingLayer(sprite, camera) {
 
 function createSpriteLayer(entity, camera) {
   const spriteBuffer = document.createElement("canvas");
-  spriteBuffer.width = 300;
+  spriteBuffer.width = 200;
   spriteBuffer.height = 300;
   const spriteBufferContext = spriteBuffer.getContext("2d");
   return function drawSpriteLayer(context, camera) {
