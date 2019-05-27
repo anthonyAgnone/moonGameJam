@@ -20,7 +20,9 @@ const {
   loadStatic,
   loadProjectileSprites,
   loadScrolling,
-  loadLevelBlocks
+  loadLevelBlocks,
+  loadGrappleSpritesRight,
+  loadGrappleSpritesLeft
 } = require("./helpers/sprites");
 
 const SpritesJS = require("./helpers/sprites.js");
@@ -52,9 +54,20 @@ Promise.all([
   loadStatic(),
   loadScrolling(),
   loadLevel(currentLevel),
-  loadProjectileSprites()
+  loadProjectileSprites(),
+  loadGrappleSpritesRight(),
+  loadGrappleSpritesLeft()
 ]).then(
-  ([hero, sprites, staticLayerSprite, scrollingSprite, level, projSprites]) => {
+  ([
+    hero,
+    sprites,
+    staticLayerSprite,
+    scrollingSprite,
+    level,
+    projSprites,
+    grappleSpritesRight,
+    grappleSpritesLeft
+  ]) => {
     // initial globals
     const comp = new Compositor();
     const camera = new Camera();
@@ -84,8 +97,6 @@ Promise.all([
 
     const obstacles = mapLevelToArray(level);
 
-    // console.log(level);
-
     const staticLayer = createStaticLayer(staticLayerSprite, camera);
     comp.layers.push(staticLayer);
 
@@ -104,6 +115,26 @@ Promise.all([
 
     comp.layers.push(createCameraLayer(camera));
 
+    let grappleReturnRight = 0;
+    let grappleReturnLeft = 0;
+
+    const grappleRightArray = [];
+    const grappleLeftArray = [];
+
+    grappleSpritesRight.names.forEach((name, i) => {
+      for (let j = 0; j < 9; j++) {
+        grappleRightArray.push(name);
+      }
+    });
+
+    grappleSpritesLeft.names.forEach((name, i) => {
+      for (let j = 0; j < 9; j++) {
+        grappleLeftArray.push(name);
+      }
+    });
+
+    let isMouseDown = false;
+
     //timer update functions
 
     timer.update = function update(deltaTime) {
@@ -113,6 +144,51 @@ Promise.all([
       collisionDetect(hero, obstacles, heroSize, deltaTime, gravity);
       context.strokeStyle = "red";
       context.beginPath();
+
+      //fire grappling particle effect
+      console.log(isMouseDown);
+      if (isMouseDown) {
+        let particlePosition = new Vec2(0, 0);
+        if (hero.grapple) {
+          if (hero.facingLeft)
+            particlePosition.set(
+              hero.pos.x - camera.pos.x - 20,
+              hero.pos.y - camera.pos.y - 20
+            );
+          else
+            particlePosition.set(
+              hero.pos.x + heroSize.width / 2 - camera.pos.x + 40,
+              hero.pos.y - camera.pos.y - 40
+            );
+        } else {
+          if (hero.facingLeft)
+            particlePosition.set(
+              hero.pos.x - camera.pos.x - 40,
+              hero.pos.y - camera.pos.y + hero.height / 2
+            );
+          else
+            particlePosition.set(
+              hero.pos.x + heroSize.width / 2 - camera.pos.x + 40,
+              hero.pos.y - camera.pos.y + hero.height / 2
+            );
+        }
+
+        if (!hero.facingLeft) {
+          grappleSpritesRight.draw(
+            grappleRightArray[grappleReturnRight],
+            context,
+            particlePosition.x,
+            particlePosition.y
+          );
+        } else {
+          grappleSpritesLeft.draw(
+            grappleLeftArray[grappleReturnLeft],
+            context,
+            particlePosition.x,
+            particlePosition.y
+          );
+        }
+      }
 
       // TODO make grappling hook ability class add to character
       // initiateGrapple(hero, context);
@@ -125,10 +201,15 @@ Promise.all([
           );
         } else {
           context.moveTo(
-            hero.pos.x + heroSize.width - camera.pos.x - 20,
-            hero.pos.y + -camera.pos.y + 20
+            hero.pos.x + heroSize.width - camera.pos.x - 10,
+            hero.pos.y - camera.pos.y - 20
           );
         }
+
+        if (grappleReturnLeft < grappleLeftArray.length - 2)
+          grappleReturnLeft += 1;
+        if (grappleReturnRight < grappleRightArray.length - 2)
+          grappleReturnRight += 1;
 
         context.lineTo(
           hero.grapplePos.x - camera.pos.x + 10.5,
@@ -148,6 +229,7 @@ Promise.all([
       if (hero.shooting === true) {
         hero.shootFrame += 1;
       }
+
       var remInd = [];
       projArr.forEach(function(proj, index) {
         // context.fillRect(
@@ -202,6 +284,7 @@ Promise.all([
       }
       click.y += camera.pos.y + 30;
       if (event.button === 0) {
+        isMouseDown = true;
         obstacles.forEach(rect => {
           if (
             click.x < rect[1] &&
@@ -266,6 +349,9 @@ Promise.all([
         hero.grapple = false;
         hero.stopped = false;
         collisionDirection = "NONE";
+        grappleReturnLeft = 0;
+        grappleReturnRight = 0;
+        isMouseDown = false;
       }
     });
 

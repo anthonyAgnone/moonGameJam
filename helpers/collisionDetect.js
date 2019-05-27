@@ -47,14 +47,6 @@ function collisionDetect(hero, obs, heroSize, deltaTime, gravity) {
         if (hero.grapple === true) {
           hero.stopped = true;
         }
-        console.log([
-          hero.pos.y < obstacles[3] - leeway,
-          hero.pos.y + heroSize.height > obstacles[2] + leeway * 2,
-          hero.pos.x < obstacles[1] - leeway,
-          hero.pos.x < obstacles[1] - leeway * 20,
-          hero.pos.x > obstacles[1] - leeway,
-          collisionDirection
-        ]);
         hero.pos.y = obstacles[3];
         if (hero.pos.x < obstacles[0] - heroSize.width / 2) {
           hero.pos.x = obstacles[0] - heroSize.width / 2;

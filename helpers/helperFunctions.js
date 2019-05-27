@@ -9,7 +9,6 @@ function setInitialPosition(hero, x, y) {
 
 function addKeyMapping(window, input, hero, gravity, timer) {
   input.addMapping(68, keyState => {
-    console.log(keyState);
     if (!hero.grapple) {
       if (keyState > 0) {
         hero.vel.set(400, hero.vel.y);
