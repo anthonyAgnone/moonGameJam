@@ -10,7 +10,7 @@ function drawBackground(background, context, sprites) {
 
 function createBackgroundLayer(backgrounds, sprites, camera) {
   const buffer = document.createElement("canvas");
-  buffer.width = 9000;
+  buffer.width = 22000;
   buffer.height = 2000;
 
   backgrounds.forEach(background => {
@@ -36,7 +36,7 @@ function createScrollingLayer(sprite, camera) {
 
 function createSpriteLayer(entity, camera) {
   const spriteBuffer = document.createElement("canvas");
-  spriteBuffer.width = 300;
+  spriteBuffer.width = 200;
   spriteBuffer.height = 300;
   const spriteBufferContext = spriteBuffer.getContext("2d");
   return function drawSpriteLayer(context, camera) {
@@ -52,7 +52,7 @@ function createSpriteLayer(entity, camera) {
 
 function createCameraLayer(cameraToDraw) {
   return function drawCameraRect(context, fromCamera) {
-    context.strokeStyle = "purple";
+    context.strokeStyle = "red";
     context.beginPath();
     context.rect(
       cameraToDraw.pos.x - fromCamera.pos.x,

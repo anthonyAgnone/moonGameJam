@@ -1,5 +1,40 @@
+body {
+  background: #000;
+}
+
 #canvas {
   display: none;
+}
+
+.shook {
+  animation: shake 0.92s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  transition: all 0.3 ease;
+}
+
+@keyframes shake {
+  10%,
+  90% {
+    transform: translate3d(-5px, 0, 0) rotate(2deg) scale(1.1);
+  }
+
+  20%,
+  80% {
+    transform: translate3d(9px, 0, 0) rotate(12deg) scale(1.2);
+  }
+
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-10px, 0, 0) rotate(2deg) scale(1.12);
+  }
+
+  40%,
+  60% {
+    transform: translate3d(12px, 0, 0) rotate(12deg) scale(1.24);
+  }
 }
 
 /* MENU STYLES */

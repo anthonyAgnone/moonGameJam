@@ -7,15 +7,53 @@ function createHero(h, w) {
 
     let currentFrame;
 
+    let deadAnimation = [];
+
+    const deadFrames = [
+      "dead0",
+      "dead1",
+      "dead2",
+      "dead3",
+      "dead4",
+      "dead5",
+      "dead6"
+    ];
+
     hero.update = function updateHero(deltaTime) {
-      if (this.vel.y !== 0) this.isFlying = true;
+      if (window.GAMEOVER) this.isDead = true;
+      if (this.isDead) {
+        this.noKeyBinds = true;
+        deadFrames.forEach((frame, i) => {
+          for (let j = 0; j < 6; j++) {
+            deadAnimation.push(frame);
+          }
+        });
+
+        if (currentFrame < 36) currentFrame += 1;
+        else {
+          window.GAMEOVER = false;
+          this.hp = 3;
+        }
+        return;
+      }
+      this.noKeyBinds = false;
+      if (this.collisionDirection == "TOP") {
+        this.isFlying = false;
+      } else {
+        this.isFlying = true;
+      }
+
+      if (!this.isFlying && this.vel.x > 400) this.vel.x = 400;
+
+      // this.vel.x = 400;
 
       this.lastPos.x = this.pos.x;
       this.lastPos.y = this.pos.y;
       this.pos.x += this.vel.x * deltaTime;
       this.pos.y += this.vel.y * deltaTime;
-      if (!this.isFlying || this.collisionDirection == "TOP")
+      if (!this.isFlying || this.collisionDirection == "TOP") {
         this.lastPos.y = this.pos.y;
+      }
       this.distance = this.vel.x * deltaTime;
       if (this.vel.x == 0) this.startPoint = this.pos.x;
       currentFrame =
@@ -88,6 +126,7 @@ function createHero(h, w) {
     ];
 
     function routeFrame(hero) {
+      if (hero.isDead) return deadAnimation[currentFrame];
       if (
         hero.lastPos.x !== hero.pos.x &&
         hero.lastPos.y == hero.pos.y &&
@@ -101,14 +140,6 @@ function createHero(h, w) {
         hero.shooting === true
       )
         return framesSh[currentFrame];
-      else if (
-        hero.lastPos.x !== hero.pos.x &&
-        hero.lastPos.y == hero.pos.y &&
-        hero.vel.x < 0
-      )
-        return framesL[currentFrame];
-      else if (hero.lastPos.x !== hero.pos.x && hero.lastPos.y == hero.pos.y)
-        return frames[currentFrame];
       else if (
         hero.shooting === true &&
         hero.collisionDirection === "BOTTOM" &&
@@ -134,11 +165,21 @@ function createHero(h, w) {
         return "hangBottom";
       else if (hero.grapple === true && hero.collisionDirection === "RIGHT")
         return "hangRight";
+      else if (hero.collisionDirection === "RIGHT") return "hangRight";
       else if (hero.grapple === true && hero.collisionDirection === "LEFT")
         return "hangLeft";
+      else if (hero.collisionDirection === "LEFT") return "hangLeft";
       else if (hero.grapple === true && hero.facingLeft === true)
         return "grappleL";
       else if (hero.grapple === true) return "grapple";
+      else if (
+        hero.lastPos.x !== hero.pos.x &&
+        hero.lastPos.y == hero.pos.y &&
+        hero.vel.x < 0
+      )
+        return framesL[currentFrame];
+      else if (hero.lastPos.x !== hero.pos.x && hero.lastPos.y == hero.pos.y)
+        return frames[currentFrame];
       else if (hero.facingLeft === true && hero.vel.x < 0) return "jump1L";
       else if (hero.vel.y < 0) return "jump1";
       else if (
@@ -153,6 +194,7 @@ function createHero(h, w) {
       return "idle";
     }
     hero.draw = function drawHero(context) {
+      console.log(this.isDead);
       sprite.draw(routeFrame(this), context, 0, 0);
     };
 
