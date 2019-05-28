@@ -1,6 +1,8 @@
 const electron = require("electron");
 const $ = require("jquery");
 
+var electronInstaller = require("electron-winstaller");
+
 // Enable live reload for all the files inside your project directory
 require("electron-reload")(__dirname);
 // Module to control application life.
@@ -75,3 +77,15 @@ class Main {
 }
 
 new Main();
+
+// const resultPromise = electronInstaller.createWindowsInstaller({
+//   appDirectory: "/moonGameJam",
+//   outputDirectory: "/build",
+//   authors: "nails",
+//   exe: "gameJam.exe"
+// });
+
+// resultPromise.then(
+//   () => console.log("It worked!"),
+//   e => console.log(`No dice: ${e.message}`)
+// );

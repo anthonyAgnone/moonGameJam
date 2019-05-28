@@ -313,7 +313,7 @@
       "size": "100",
       "tile": "moon2BOSS",
       "dmg": "false",
-      "ranges": [[167, 8]]
+      "ranges": [[159, 4]]
     }
   ]
 }

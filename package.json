@@ -15,10 +15,11 @@
     "electron": "^1.4.1",
     "electron-builder": "^20.41.0",
     "electron-installer-dmg": "^2.0.0",
-    "electron-packager": "^13.1.1",
-    "electron-reload": "^1.4.0"
+    "electron-packager": "^13.1.1"
   },
   "dependencies": {
+    "electron-reload": "^1.4.0",
+    "electron-winstaller": "^3.0.4",
     "fs-jetpack": "^0.12.0",
     "jquery": "^3.4.1"
   },
@@ -28,7 +29,7 @@
       "category": "Game Jame Submition"
     },
     "win": {
-      "target": "squirrel",
+      "target": "portable",
       "icon": "build/icon.ico"
     }
   }

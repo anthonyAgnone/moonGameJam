@@ -7,11 +7,17 @@ function setInitialPosition(hero, x, y) {
   hero.vel.set(0, 0);
 }
 
-function addKeyMapping(window, input, hero, gravity, timer) {
+function addKeyMapping(window, input, hero, gravity, timer, moondeath) {
   if (!hero.noKeyBinds) {
     input.addMapping(187, keyState => {
       if (keyState > 0) {
         window.GAMEOVER = true;
+      }
+    });
+
+    input.addMapping(50, keyState => {
+      if (keyState > 0) {
+        moondeath = true;
       }
     });
 

@@ -52,7 +52,7 @@ function createSpriteLayer(entity, camera) {
 
 function createCameraLayer(cameraToDraw) {
   return function drawCameraRect(context, fromCamera) {
-    context.strokeStyle = "purple";
+    context.strokeStyle = "red";
     context.beginPath();
     context.rect(
       cameraToDraw.pos.x - fromCamera.pos.x,
