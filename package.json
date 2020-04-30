@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "fs-jetpack": "^0.12.0",
-    "jquery": "^3.4.1"
+    "jquery": "^3.5.0"
   },
   "build": {
     "appId": "devious",
